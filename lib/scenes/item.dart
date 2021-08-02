@@ -8,7 +8,7 @@ class Item extends StatefulWidget {
 class _itemState extends State<Item> {
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
-    var url = ModalRoute.of(context).settings.arguments;
+    String url = ModalRoute.of(context)!.settings.arguments.toString();
     return Scaffold(
       key: _scaffKey,
       backgroundColor: Colors.grey,
@@ -159,6 +159,6 @@ class _itemState extends State<Item> {
     SnackBar snackBar = SnackBar(
       content: Text(msg),
     );
-    _scaffKey.currentState.showSnackBar(snackBar);
+    _scaffKey.currentState!.showSnackBar(snackBar);
   }
 }

@@ -79,7 +79,14 @@ class _HomeState extends State<Home> {
               onTap: () {
                 _menu(context, 'support');
               },
-            )
+            ),
+        ListTile(
+          title: Text('Configuracion'),
+          leading: Icon(Icons.home_repair_service, color: Colors.red,),
+          onTap: () {
+            _menu(context, 'CONFIGURACION');
+          },
+        )
           ],
         ),
       ),

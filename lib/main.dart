@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/scenes/shop.dart';
 import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
+import 'package:flutter_app2/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,24 +15,26 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       initialRoute: '/',
-      theme:  ThemeData(
+      theme: ThemeData(
         fontFamily: 'Raleway',
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
         accentColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      onGenerateRoute: (RouteSettings settings){
-        return MaterialPageRoute(builder: (BuildContext context){
-          switch(settings.name){
+      onGenerateRoute: (RouteSettings settings) {
+        return MaterialPageRoute(builder: (BuildContext context) {
+          switch (settings.name) {
             case "/":
               return Login();
-        case "/Shop":
-          return Shop();
-        case "/Item":
-          return Item();
-        case "/Login":
-          return Login();
+            case "/Shop":
+              return Shop();
+            case "/Item":
+              return Item();
+            case "/Login":
+              return Login();
+            default:
+              return Login();
           }
         });
       },
@@ -124,6 +127,6 @@ class MyHomePage extends StatelessWidget {
     SnackBar snackBar = SnackBar(
       content: Text('Elemento Eliminado'),
     );
-    _keyScaff.currentState.showSnackBar(snackBar);
+    _keyScaff.currentState!.showSnackBar(snackBar);
   }
 }

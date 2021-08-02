@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/scripts/request.dart' as request;
 
 class Login extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _LoginState extends State<Login> {
             padding: EdgeInsets.symmetric(vertical: 70),
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-              colors: [Colors.greenAccent, Colors.blueAccent[700]],
+              colors: [Colors.greenAccent, Colors.blueAccent],
             )),
             child: Image.asset(
               'lib/assets/images/logoMorita2.png',
@@ -49,10 +50,10 @@ class _LoginState extends State<Login> {
                         TextFormField(
                           decoration: InputDecoration(labelText: "Usuario:"),
                           onSaved: (value) {
-                            userName = value;
+                            userName = value!;
                           },
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value!.isEmpty) {
                               return 'Este campo es obligatorio';
                             }
                           },
@@ -64,10 +65,10 @@ class _LoginState extends State<Login> {
                           decoration: InputDecoration(labelText: "Contraseña:"),
                           obscureText: true,
                           onSaved: (value) {
-                            password = value;
+                            password = value!;
                           },
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value!.isEmpty) {
                               return 'Este campo es obligatorio';
                             }
                           },
@@ -91,7 +92,7 @@ class _LoginState extends State<Login> {
                                   height: 20,
                                   width: 20,
                                   margin: const EdgeInsets.only(left: 20),
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(color: Colors.white,),
                                 )
                             ],
                           ),
@@ -135,12 +136,13 @@ class _LoginState extends State<Login> {
 
   void _login(BuildContext context) {
     if (!_loading) {
-      if(_keyForm.currentState.validate()){
-        _keyForm.currentState.save();
+      if(_keyForm.currentState!.validate()){
+        _keyForm.currentState!.save();
         setState(() {
           _loading = true;
           _errorMessage = "Usuario y/o clave incorrecto";
           print(userName + '>>' + password);
+          request.IniciarSesion(userName, password);
         });
       }
     }else{
@@ -152,3 +154,4 @@ class _LoginState extends State<Login> {
     }
   }
 }
+
