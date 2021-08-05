@@ -13,9 +13,55 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio'),
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Center(child: Text(menu)),
+      body: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            final urlImage = 'https://picsum.photos/id/$index/410/300';
+            return InkWell(
+              onTap: (){
+                Navigator.of(context).pushNamed('/Item', arguments: urlImage);
+              },
+              child: Hero(
+                tag: urlImage,
+                child: Card(
+                  color: Colors.grey[300],
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: <Widget>[
+                        FadeInImage(
+                          image: AssetImage(
+                              'https://picsum.photos/id/$index/400/300'),
+                          placeholder:
+                          AssetImage("lib/assets/images/loader.gif"),
+                        ),
+                        Text(
+                          'imagen',
+                          style: TextStyle(
+                              fontSize: 25, fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          'descripcion imagen',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          '\$ 100.00',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  elevation: 2.0,
+                ),
+              ),
+            );
+          }),
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
@@ -25,7 +71,7 @@ class _HomeState extends State<Home> {
                 DrawerHeader(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Colors.blueGrey,
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,46 +93,64 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: Text('Shop'),
-              leading: Icon(Icons.shop, color: Colors.blueGrey,),
+              leading: Icon(
+                Icons.shop,
+                color: Theme.of(context).primaryColor,
+              ),
               onTap: () {
                 _menu(context, 'shop');
               },
             ),
             ListTile(
               title: Text('Mis mascotas'),
-              leading: Icon(Icons.pets, color: Colors.blueGrey,),
+              leading: Icon(
+                Icons.pets,
+                color: Theme.of(context).primaryColor,
+              ),
               onTap: () {
                 _menu(context, 'mis mascotas');
               },
             ),
             ListTile(
               title: Text('Ultimas compras'),
-              leading: Icon(Icons.monetization_on, color: Colors.blueGrey,),
+              leading: Icon(
+                Icons.monetization_on,
+                color: Theme.of(context).primaryColor,
+              ),
               onTap: () {
                 _menu(context, 'ultimas compras');
               },
             ),
             ListTile(
               title: Text('Mis tarjetas'),
-              leading: Icon(Icons.credit_card,  color: Colors.blueGrey,),
+              leading: Icon(
+                Icons.credit_card,
+                color: Theme.of(context).primaryColor,
+              ),
               onTap: () {
                 _menu(context, 'mis tarjetas');
               },
             ),
             ListTile(
               title: Text('Soporte'),
-              leading: Icon(Icons.support, color: Colors.blueGrey,),
+              leading: Icon(
+                Icons.support,
+                color: Theme.of(context).primaryColor,
+              ),
               onTap: () {
                 _menu(context, 'support');
               },
             ),
-        ListTile(
-          title: Text('Configuracion'),
-          leading: Icon(Icons.home_repair_service, color: Colors.red,),
-          onTap: () {
-            _menu(context, 'CONFIGURACION');
-          },
-        )
+            ListTile(
+              title: Text('Cerrar sesion'),
+              leading: Icon(
+                Icons.close,
+                color: Colors.red,
+              ),
+              onTap: () {
+                _menu(context, 'CONFIGURACION');
+              },
+            )
           ],
         ),
       ),
@@ -98,7 +162,7 @@ class _HomeState extends State<Home> {
     setState(() {
       menu = pantalla;
     });
-    if(pantalla == 'shop'){
+    if (pantalla == 'shop') {
       Navigator.of(context).pushNamed('/Shop');
     }
     print(pantalla);

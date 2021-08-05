@@ -49,6 +49,16 @@ flutter:
   assets:
     - lib/assets/images/logoMorita2.png
     - lib/assets/images/loader.gif
+    - lib/assets/icons/catFood.png
+    - lib/assets/icons/dogFood.png
+    - lib/assets/icons/clothes.png
+    - lib/assets/icons/leash.png
+    - lib/assets/icons/pipette.png
+    - lib/assets/icons/shampoo.png
+    - lib/assets/icons/snack.png
+    - lib/assets/icons/toy.png
+    - lib/assets/icons/urinary.png
+    - lib/assets/icons/dog-food-pet.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

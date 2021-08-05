@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/shop.dart';
 import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
-import 'package:flutter_app2/home.dart';
+import 'package:flutter_app2/scenes/register.dart';
+import 'package:flutter_app2/Home.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,15 +27,17 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (BuildContext context) {
           switch (settings.name) {
-            case "/":
-              return Login();
+            case "/Home":
+              return Home();
             case "/Shop":
               return Shop();
             case "/Item":
               return Item();
             case "/Login":
               return Login();
-            default:
+            case "/Register":
+              return Register();
+            default :
               return Login();
           }
         });

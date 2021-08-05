@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
+import 'package:flutter_app2/scripts/album.dart' as album;
 
 class Login extends StatefulWidget {
   @override
@@ -12,9 +13,11 @@ class _LoginState extends State<Login> {
   String password = '';
   String _errorMessage = "";
   GlobalKey<FormState> _keyForm = GlobalKey();
+  GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _keyScaf,
         body: Form(
       key: _keyForm,
       child: Stack(
@@ -26,14 +29,28 @@ class _LoginState extends State<Login> {
                 gradient: LinearGradient(
               colors: [Colors.greenAccent, Colors.blueAccent],
             )),
-            child: Image.asset(
-              'lib/assets/images/logoMorita2.png',
-              color: Colors.white,
-              height: 200,
+            child: Column(
+              children: [
+                Image.asset(
+                  'lib/assets/images/logoMorita2.png',
+                  color: Colors.white,
+                  height: 150,
+                ),
+                SizedBox(height: 20,),
+                Center(
+                    child: Text(
+                      'Moritas Shop',
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    )),
+              ],
             ),
+            height: 350,
           ),
           Transform.translate(
-            offset: Offset(0, -40),
+            offset: Offset(0, -65),
             child: (Center(
               child: SingleChildScrollView(
                 child: Card(
@@ -48,7 +65,7 @@ class _LoginState extends State<Login> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         TextFormField(
-                          decoration: InputDecoration(labelText: "Usuario:"),
+                          decoration: InputDecoration(labelText: "Email:"),
                           onSaved: (value) {
                             userName = value!;
                           },
@@ -82,6 +99,7 @@ class _LoginState extends State<Login> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           onPressed: () {
                             _login(context);
+                            _loading;
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -134,15 +152,28 @@ class _LoginState extends State<Login> {
     ));
   }
 
-  void _login(BuildContext context) {
+  void _login(BuildContext context) async{
     if (!_loading) {
       if(_keyForm.currentState!.validate()){
         _keyForm.currentState!.save();
         setState(() {
           _loading = true;
-          _errorMessage = "Usuario y/o clave incorrecto";
-          print(userName + '>>' + password);
-          request.IniciarSesion(userName, password);
+        });
+        album.tokenIngreso token= await request.IniciarSesion(userName, password);
+        print('tokeN ' + token.id.toString());
+        setState(() {
+          if(token.id != '' && token.id != '-1'){
+            _loading = false;
+            _errorMessage = "";
+            Navigator.of(context).pushNamed('/Home');
+          }else if(token.id == '' && token.id != '-1'){
+            _loading = false;
+            _errorMessage = "Usuario y/o clave incorrecto";
+          }else if(token.id != '' && token.id == '-1'){
+            _loading = false;
+            _mostrarMensaje('Error de conexion');
+          }
+
         });
       }
     }else{
@@ -152,6 +183,13 @@ class _LoginState extends State<Login> {
         print(userName + '>>' + password);
       });
     }
+  }
+
+  void _mostrarMensaje(String msg) {
+    SnackBar snackBar = SnackBar(
+      content: Text(msg),
+    );
+    _keyScaf.currentState!.showSnackBar(snackBar);
   }
 }
 
