@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 
 class Item extends StatefulWidget {
+  var imagen;
   @override
   _itemState createState() => _itemState();
+  Item(var imagen){
+    this.imagen = imagen;
+  }
 }
 
 class _itemState extends State<Item> {
+
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
     String url = ModalRoute.of(context)!.settings.arguments.toString();
+    print(ModalRoute.of(context)!.settings.arguments.toString());
     return Scaffold(
       key: _scaffKey,
       backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: Text('Visor de imagen'),
-        toolbarHeight: -24,
-        bottomOpacity: 1,
+        title: Text('Producto'),
       ),
       body: Center(
         child: Hero(
@@ -26,8 +30,7 @@ class _itemState extends State<Item> {
             elevation: 20,
             child: Padding(
               padding: const EdgeInsets.all(0.0),
-              child:
-                cardConteiner(url, context),
+              child: cardConteiner(url, context),
             ),
           ),
         ),
@@ -35,18 +38,21 @@ class _itemState extends State<Item> {
     );
   }
 
-  Widget cardConteiner(var url, BuildContext context){
+  Widget cardConteiner(var url, BuildContext context) {
+    print(url.toString());
     return Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          FadeInImage(
-            image: NetworkImage(url),
-            placeholder: AssetImage("lib/assets/images/loader.gif"),
-            fadeInCurve: Curves.decelerate,
+          Center(
+            child: FadeInImage(
+              image: AssetImage(url),
+              width: 200,
+              placeholder: AssetImage("lib/assets/images/loader.gif"),
+              fadeInCurve: Curves.decelerate,
+            ),
           ),
-
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -59,46 +65,21 @@ class _itemState extends State<Item> {
               ),
               ListView(
                 padding: const EdgeInsets.all(20.0),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                    ),
-                    Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                    ),
-                    Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                            " do eiusmod tempor incididunt ut labore et dolore magna "
-                            "aliqua. Ut enim ad minim veniam, quis nostrud "
-                            "exercitation ullamco laboris nisi ut aliquip ex ea "
-                            "commodo consequat."
-                    ),
-                  ],
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                children: <Widget>[
+                  Text(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
+                      " do eiusmod tempor incididunt ut labore et dolore magna "
+                      "aliqua. Ut enim ad minim veniam, quis nostrud "
+                      "exercitation ullamco laboris nisi ut aliquip ex ea "
+                      "commodo consequat."
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
+                      " do eiusmod tempor incididunt ut labore et dolore magna "
+                      "aliqua. Ut enim ad minim veniam, quis nostrud "
+                      "exercitation ullamco laboris nisi ut aliquip ex ea "
+                      "commodo consequat."),
+                ],
               ),
               Text('Precio: \$ 100,00', style: TextStyle(fontSize: 20)),
               Row(
@@ -120,8 +101,7 @@ class _itemState extends State<Item> {
               ),
             ],
           )
-        ]
-    );
+        ]);
   }
 
   void _showDialog(BuildContext context) {

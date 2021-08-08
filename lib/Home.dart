@@ -7,61 +7,74 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String menu = 'home';
+  List<String> categoriasNombres = ['Alimentos','Golosinas','Juguetes',
+  'Ropa','Accesorios','Higiene','Piedras','Pipetas'];
+  List<String> categoriasIconos = ['lib/assets/icons/dog-food-pet.png',
+    'lib/assets/icons/snack.png',
+    'lib/assets/icons/toy.png',
+    'lib/assets/icons/clothes.png',
+    'lib/assets/icons/leash.png',
+    'lib/assets/icons/shampoo.png',
+    'lib/assets/icons/urinary.png',
+    'lib/assets/icons/pipette.png'];
 
   @override
   Widget build(BuildContext context) {
+    String urlImage = 'lib/assets/icons/dog-food-pet.png';
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            final urlImage = 'https://picsum.photos/id/$index/410/300';
-            return InkWell(
-              onTap: (){
-                Navigator.of(context).pushNamed('/Item', arguments: urlImage);
-              },
-              child: Hero(
-                tag: urlImage,
+      body: GridView.count(
+        // crossAxisCount is the number of columns
+        crossAxisCount: 2,
+        // This creates two columns with two items in each column
+        children: List.generate(categoriasNombres.length, (index) {
+          return InkWell(
+            onTap: (){
+              Navigator.of(context).pushNamed('/Item', arguments: categoriasIconos[index]);
+            },
+            child: Hero(
+              tag: categoriasIconos[index],
+              child: Container(
+                margin: EdgeInsets.all(2),
                 child: Card(
                   color: Colors.grey[300],
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: <Widget>[
-                        FadeInImage(
-                          image: AssetImage(
-                              'https://picsum.photos/id/$index/400/300'),
-                          placeholder:
-                          AssetImage("lib/assets/images/loader.gif"),
-                        ),
-                        Text(
-                          'imagen',
-                          style: TextStyle(
-                              fontSize: 25, fontStyle: FontStyle.italic),
-                        ),
-                        Text(
-                          'descripcion imagen',
-                          style: TextStyle(
-                            fontSize: 15,
+                  semanticContainer: true,
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          FadeInImage(
+                            image: AssetImage(
+                                categoriasIconos[index]),
+                            height: 120,
+                            placeholder:
+                            AssetImage("lib/assets/images/loader.gif"),
                           ),
-                        ),
-                        Text(
-                          '\$ 100.00',
-                          style: TextStyle(
-                            fontSize: 15,
+                          SizedBox(height: 15,),
+                          Center(
+                            child: Text(
+                              categoriasNombres[index],
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   elevation: 2.0,
                 ),
               ),
-            );
-          }),
+            ),
+          );
+        }),
+      ),
       drawer: Drawer(
         child: ListView(
           children: <Widget>[

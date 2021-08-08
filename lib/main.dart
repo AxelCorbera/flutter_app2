@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      initialRoute: '/',
+      initialRoute: '/Home',
       theme: ThemeData(
         fontFamily: 'Raleway',
         brightness: Brightness.light,
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             case "/Shop":
               return Shop();
             case "/Item":
-              return Item();
+              return Item(String);
             case "/Login":
               return Login();
             case "/Register":
