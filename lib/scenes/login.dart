@@ -159,7 +159,7 @@ class _LoginState extends State<Login> {
         setState(() {
           _loading = true;
         });
-        album.tokenIngreso token= await request.IniciarSesion(userName, password);
+        request.Album token= await request.IniciarSesion(userName, password);
         print('tokeN ' + token.id.toString());
         setState(() {
           if(token.id != '' && token.id != '-1'){

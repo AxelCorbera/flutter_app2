@@ -145,7 +145,6 @@ class _RegisterState extends State<Register> {
                               textColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               onPressed: () {
-                                _login(context);
                                 _loading;
                               },
                               child: Row(
@@ -208,7 +207,7 @@ class _RegisterState extends State<Register> {
         setState(() {
           _loading = true;
         });
-        album.tokenIngreso token =
+        var token =
             await request.IniciarSesion(userName, password);
         print('tokeN ' + token.id.toString());
         setState(() {

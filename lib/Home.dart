@@ -5,10 +5,17 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+class argumentsHome{
+
+  final String icono;
+
+  argumentsHome(this.icono);
+}
+
 class _HomeState extends State<Home> {
   String menu = 'home';
-  List<String> categoriasNombres = ['Alimentos','Golosinas','Juguetes',
-  'Ropa','Accesorios','Higiene','Piedras','Pipetas'];
+  List<String> categoriasNombres = ['Alimentos', 'Golosinas', 'Juguetes',
+    'Ropa', 'Accesorios', 'Higiene', 'Piedras', 'Pipetas'];
   List<String> categoriasIconos = ['lib/assets/icons/dog-food-pet.png',
     'lib/assets/icons/snack.png',
     'lib/assets/icons/toy.png',
@@ -24,7 +31,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
       ),
       body: GridView.count(
         // crossAxisCount is the number of columns
@@ -32,19 +41,21 @@ class _HomeState extends State<Home> {
         // This creates two columns with two items in each column
         children: List.generate(categoriasNombres.length, (index) {
           return InkWell(
-            onTap: (){
-              Navigator.of(context).pushNamed('/Item', arguments: categoriasIconos[index]);
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                  '/Item', arguments: argumentsHome(categoriasIconos[index]));
+              print('envia ' + categoriasIconos[index].toString());
             },
             child: Hero(
               tag: categoriasIconos[index],
               child: Container(
-                margin: EdgeInsets.all(2),
+                margin: EdgeInsets.all(5),
                 child: Card(
-                  color: Colors.grey[300],
+                  color: Colors.white60,
                   semanticContainer: true,
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(15.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +67,7 @@ class _HomeState extends State<Home> {
                             placeholder:
                             AssetImage("lib/assets/images/loader.gif"),
                           ),
-                          SizedBox(height: 15,),
+                          SizedBox(height: 10,),
                           Center(
                             child: Text(
                               categoriasNombres[index],
@@ -68,7 +79,9 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  elevation: 2.0,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             ),
@@ -84,7 +97,9 @@ class _HomeState extends State<Home> {
                 DrawerHeader(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +123,9 @@ class _HomeState extends State<Home> {
               title: Text('Shop'),
               leading: Icon(
                 Icons.shop,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
               onTap: () {
                 _menu(context, 'shop');
@@ -118,7 +135,9 @@ class _HomeState extends State<Home> {
               title: Text('Mis mascotas'),
               leading: Icon(
                 Icons.pets,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
               onTap: () {
                 _menu(context, 'mis mascotas');
@@ -128,7 +147,9 @@ class _HomeState extends State<Home> {
               title: Text('Ultimas compras'),
               leading: Icon(
                 Icons.monetization_on,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
               onTap: () {
                 _menu(context, 'ultimas compras');
@@ -138,7 +159,9 @@ class _HomeState extends State<Home> {
               title: Text('Mis tarjetas'),
               leading: Icon(
                 Icons.credit_card,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
               onTap: () {
                 _menu(context, 'mis tarjetas');
@@ -148,7 +171,9 @@ class _HomeState extends State<Home> {
               title: Text('Soporte'),
               leading: Icon(
                 Icons.support,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
               onTap: () {
                 _menu(context, 'support');
@@ -161,7 +186,7 @@ class _HomeState extends State<Home> {
                 color: Colors.red,
               ),
               onTap: () {
-                _menu(context, 'CONFIGURACION');
+                Navigator.of(context).pushNamed('/');
               },
             )
           ],
@@ -169,6 +194,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
 
   void _menu(BuildContext context, String pantalla) {
     Navigator.pop(context);

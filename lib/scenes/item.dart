@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/Home.dart';
 
 class Item extends StatefulWidget {
-  var imagen;
+  static const routeName = '/Item';
+
   @override
   _itemState createState() => _itemState();
-  Item(var imagen){
-    this.imagen = imagen;
-  }
 }
 
 class _itemState extends State<Item> {
-
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
-    String url = ModalRoute.of(context)!.settings.arguments.toString();
-    print(ModalRoute.of(context)!.settings.arguments.toString());
+    final  url = ModalRoute.of(context)!.settings.arguments as argumentsHome;
+    print('itemState ' + url.icono);
     return Scaffold(
       key: _scaffKey,
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white60,
       appBar: AppBar(
         title: Text('Producto'),
       ),
       body: Center(
         child: Hero(
-          tag: url,
+          tag: url.icono,
           child: Card(
             margin: EdgeInsets.only(left: 15, right: 15, top: 25, bottom: 25),
             color: Colors.grey[200],
             elevation: 20,
             child: Padding(
               padding: const EdgeInsets.all(0.0),
-              child: cardConteiner(url, context),
+              child: cardConteiner(url.icono, context),
             ),
           ),
         ),

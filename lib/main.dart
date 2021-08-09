@@ -31,10 +31,12 @@ class MyApp extends StatelessWidget {
               return Home();
             case "/Shop":
               return Shop();
-            case "/Item":
-              return Item(String);
             case "/Login":
               return Login();
+            case "/Item":
+              final args = settings.arguments as argumentsHome;
+              print("recibe :" + args.icono);
+              return Item();
             case "/Register":
               return Register();
             default :
