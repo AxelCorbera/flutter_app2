@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
 
 class Item extends StatefulWidget {
+  const Item({Key? key, required this.icono}) : super(key:key);
+
+  final String icono;
   static const routeName = '/Item';
 
   @override
@@ -11,8 +14,8 @@ class Item extends StatefulWidget {
 class _itemState extends State<Item> {
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
-    final  url = ModalRoute.of(context)!.settings.arguments as argumentsHome;
-    print('itemState ' + url.icono);
+    final  icono = widget.icono;
+    print('itemState ' + icono);
     return Scaffold(
       key: _scaffKey,
       backgroundColor: Colors.white60,
@@ -21,14 +24,14 @@ class _itemState extends State<Item> {
       ),
       body: Center(
         child: Hero(
-          tag: url.icono,
+          tag: icono,
           child: Card(
             margin: EdgeInsets.only(left: 15, right: 15, top: 25, bottom: 25),
             color: Colors.grey[200],
             elevation: 20,
             child: Padding(
               padding: const EdgeInsets.all(0.0),
-              child: cardConteiner(url.icono, context),
+              child: cardConteiner(icono, context),
             ),
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
 import 'package:flutter_app2/scenes/register.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/category.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,9 +37,12 @@ class MyApp extends StatelessWidget {
             case "/Item":
               final args = settings.arguments as argumentsHome;
               print("recibe :" + args.icono);
-              return Item();
+              return Item(icono: args.icono);
             case "/Register":
               return Register();
+            case "/Category":
+              final args = settings.arguments as argumentsHome;
+              return Category(categoria: args.categoria);
             default :
               return Login();
           }

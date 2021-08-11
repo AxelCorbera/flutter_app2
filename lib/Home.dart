@@ -5,35 +5,43 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class argumentsHome{
-
+class argumentsHome {
   final String icono;
+  final String categoria;
 
-  argumentsHome(this.icono);
+  argumentsHome(this.icono, this.categoria);
 }
 
 class _HomeState extends State<Home> {
   String menu = 'home';
-  List<String> categoriasNombres = ['Alimentos', 'Golosinas', 'Juguetes',
-    'Ropa', 'Accesorios', 'Higiene', 'Piedras', 'Pipetas'];
-  List<String> categoriasIconos = ['lib/assets/icons/dog-food-pet.png',
+  List<String> categoriasNombres = [
+    'Alimentos',
+    'Golosinas',
+    'Juguetes',
+    'Ropa',
+    'Accesorios',
+    'Higiene',
+    'Piedras',
+    'Pipetas'
+  ];
+  List<String> categoriasIconos = [
+    'lib/assets/icons/dog-food-pet.png',
     'lib/assets/icons/snack.png',
     'lib/assets/icons/toy.png',
     'lib/assets/icons/clothes.png',
     'lib/assets/icons/leash.png',
     'lib/assets/icons/shampoo.png',
     'lib/assets/icons/urinary.png',
-    'lib/assets/icons/pipette.png'];
-
+    'lib/assets/icons/pipette.png'
+  ];
+  GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    String urlImage = 'lib/assets/icons/dog-food-pet.png';
     return Scaffold(
+      key: _keyScaf,
       appBar: AppBar(
         title: Text('Inicio'),
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: GridView.count(
         // crossAxisCount is the number of columns
@@ -42,9 +50,10 @@ class _HomeState extends State<Home> {
         children: List.generate(categoriasNombres.length, (index) {
           return InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(
-                  '/Item', arguments: argumentsHome(categoriasIconos[index]));
-              print('envia ' + categoriasIconos[index].toString());
+              Navigator.of(context).pushNamed('/Category',
+                  arguments: argumentsHome(
+                      categoriasIconos[index], categoriasNombres[index]));
+              print('envia ' + categoriasNombres[index].toString());
             },
             child: Hero(
               tag: categoriasIconos[index],
@@ -61,13 +70,14 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           FadeInImage(
-                            image: AssetImage(
-                                categoriasIconos[index]),
+                            image: AssetImage(categoriasIconos[index]),
                             height: 120,
                             placeholder:
-                            AssetImage("lib/assets/images/loader.gif"),
+                                AssetImage("lib/assets/images/loader.gif"),
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Center(
                             child: Text(
                               categoriasNombres[index],
@@ -97,9 +107,7 @@ class _HomeState extends State<Home> {
                 DrawerHeader(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,9 +131,7 @@ class _HomeState extends State<Home> {
               title: Text('Shop'),
               leading: Icon(
                 Icons.shop,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               onTap: () {
                 _menu(context, 'shop');
@@ -135,45 +141,37 @@ class _HomeState extends State<Home> {
               title: Text('Mis mascotas'),
               leading: Icon(
                 Icons.pets,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'mis mascotas');
+                _menu(context, 'pets');
               },
             ),
             ListTile(
               title: Text('Ultimas compras'),
               leading: Icon(
                 Icons.monetization_on,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'ultimas compras');
+                _menu(context, 'shopping');
               },
             ),
             ListTile(
               title: Text('Mis tarjetas'),
               leading: Icon(
                 Icons.credit_card,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'mis tarjetas');
+                _menu(context, 'cards');
               },
             ),
             ListTile(
               title: Text('Soporte'),
               leading: Icon(
                 Icons.support,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               onTap: () {
                 _menu(context, 'support');
@@ -195,25 +193,54 @@ class _HomeState extends State<Home> {
     );
   }
 
-
   void _menu(BuildContext context, String pantalla) {
     Navigator.pop(context);
     setState(() {
       menu = pantalla;
     });
-    if (pantalla == 'shop') {
-      Navigator.of(context).pushNamed('/Shop');
+    switch (pantalla) {
+      case 'shop':
+        //Navigator.of(context).pushNamed('/Shop');
+        return;
+      case 'pets':
+        Navigator.of(context).pushNamed('/Shop');
+        return;
+      case 'shopping':
+        Navigator.of(context).pushNamed('/Shop');
+        return;
+      case 'support':
+        Navigator.of(context).pushNamed('/Shop');
+        return;
     }
-    print(pantalla);
-  }
 
-  @override
-  void initState() {
-    super.initState();
-  }
+    @override
+    void initState() {
+      super.initState();
+    }
 
-  @override
-  void dispose() {
-    super.dispose();
+    @override
+    void dispose() {
+      super.dispose();
+    }
+
+    showDialog(BuildContext context, GlobalKey _key) async {
+      return SimpleDialog(
+        key: _key,
+        children: <Widget>[
+          Center(
+            child: Container(
+              child: Row(children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 10,
+                  width: 10,
+                ),
+                Text("Please Wait!"),
+              ]),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }
