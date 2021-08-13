@@ -7,9 +7,8 @@ class Home extends StatefulWidget {
 
 class argumentsHome {
   final String icono;
-  final String categoria;
 
-  argumentsHome(this.icono, this.categoria);
+  argumentsHome(this.icono);
 }
 
 class _HomeState extends State<Home> {
@@ -34,11 +33,11 @@ class _HomeState extends State<Home> {
     'lib/assets/icons/urinary.png',
     'lib/assets/icons/pipette.png'
   ];
-  GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
+    String urlImage = 'lib/assets/icons/dog-food-pet.png';
     return Scaffold(
-      key: _keyScaf,
       appBar: AppBar(
         title: Text('Inicio'),
         backgroundColor: Theme.of(context).primaryColor,
@@ -50,10 +49,8 @@ class _HomeState extends State<Home> {
         children: List.generate(categoriasNombres.length, (index) {
           return InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed('/Category',
-                  arguments: argumentsHome(
-                      categoriasIconos[index], categoriasNombres[index]));
-              print('envia ' + categoriasNombres[index].toString());
+              Navigator.of(context).pushNamed(
+                  '/Category', arguments: argumentsHome(categoriasNombres[index]));
             },
             child: Hero(
               tag: categoriasIconos[index],
@@ -144,7 +141,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'pets');
+                _menu(context, 'mis mascotas');
               },
             ),
             ListTile(
@@ -154,7 +151,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'shopping');
+                _menu(context, 'ultimas compras');
               },
             ),
             ListTile(
@@ -164,7 +161,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'cards');
+                _menu(context, 'mis tarjetas');
               },
             ),
             ListTile(
@@ -198,49 +195,19 @@ class _HomeState extends State<Home> {
     setState(() {
       menu = pantalla;
     });
-    switch (pantalla) {
-      case 'shop':
-        //Navigator.of(context).pushNamed('/Shop');
-        return;
-      case 'pets':
-        Navigator.of(context).pushNamed('/Shop');
-        return;
-      case 'shopping':
-        Navigator.of(context).pushNamed('/Shop');
-        return;
-      case 'support':
-        Navigator.of(context).pushNamed('/Shop');
-        return;
+    if (pantalla == 'shop') {
+      Navigator.of(context).pushNamed('/Shop');
     }
+    print(pantalla);
+  }
 
-    @override
-    void initState() {
-      super.initState();
-    }
+  @override
+  void initState() {
+    super.initState();
+  }
 
-    @override
-    void dispose() {
-      super.dispose();
-    }
-
-    showDialog(BuildContext context, GlobalKey _key) async {
-      return SimpleDialog(
-        key: _key,
-        children: <Widget>[
-          Center(
-            child: Container(
-              child: Row(children: <Widget>[
-                CircularProgressIndicator(),
-                SizedBox(
-                  height: 10,
-                  width: 10,
-                ),
-                Text("Please Wait!"),
-              ]),
-            ),
-          ),
-        ],
-      );
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

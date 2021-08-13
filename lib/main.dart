@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/category.dart';
+import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scenes/shop.dart';
 import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
 import 'package:flutter_app2/scenes/register.dart';
 import 'package:flutter_app2/Home.dart';
-import 'package:flutter_app2/scenes/category.dart';
+import 'package:flutter_app2/scripts/request.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,15 +37,20 @@ class MyApp extends StatelessWidget {
             case "/Login":
               return Login();
             case "/Item":
-              final args = settings.arguments as argumentsHome;
-              print("recibe :" + args.icono);
-              return Item(icono: args.icono);
-            case "/Register":
-              return Register();
+              final args = settings.arguments as Marca;
+              return Item(item: args);
+            case "/Items":
+              argumentsItems args = settings.arguments as argumentsItems;
+              return Items(
+                  categoria: args.categoria,
+                  marca: args.marca,
+                  busqueda: args.busqueda);
             case "/Category":
               final args = settings.arguments as argumentsHome;
-              return Category(categoria: args.categoria);
-            default :
+              return Category(categoria: args.icono);
+            case "/Register":
+              return Register();
+            default:
               return Login();
           }
         });

@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/items.dart';
+import 'package:flutter_app2/scripts/request.dart';
 
 class Item extends StatefulWidget {
-  const Item({Key? key, required this.icono}) : super(key:key);
-
-  final String icono;
+  const Item({Key? key, required this.item}) : super(key: key);
   static const routeName = '/Item';
+  final Marca item;
 
   @override
   _itemState createState() => _itemState();
@@ -14,24 +17,22 @@ class Item extends StatefulWidget {
 class _itemState extends State<Item> {
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
-    final  icono = widget.icono;
-    print('itemState ' + icono);
     return Scaffold(
       key: _scaffKey,
-      backgroundColor: Colors.white60,
+      backgroundColor: Colors.white38,
       appBar: AppBar(
         title: Text('Producto'),
       ),
       body: Center(
         child: Hero(
-          tag: icono,
+          tag: widget.item.id,
           child: Card(
             margin: EdgeInsets.only(left: 15, right: 15, top: 25, bottom: 25),
             color: Colors.grey[200],
             elevation: 20,
             child: Padding(
               padding: const EdgeInsets.all(0.0),
-              child: cardConteiner(icono, context),
+              child: cardConteiner(widget.item, context),
             ),
           ),
         ),
@@ -39,17 +40,18 @@ class _itemState extends State<Item> {
     );
   }
 
-  Widget cardConteiner(var url, BuildContext context) {
-    print(url.toString());
+  Widget cardConteiner(Marca item, BuildContext context) {
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(height: 20,),
           Center(
             child: FadeInImage(
-              image: AssetImage(url),
-              width: 200,
+              image: _imagen(item.imagen),
+              height: 200,
+              fit: BoxFit.fill,
               placeholder: AssetImage("lib/assets/images/loader.gif"),
               fadeInCurve: Curves.decelerate,
             ),
@@ -60,7 +62,7 @@ class _itemState extends State<Item> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'NOMBRE DEL PRODUCTO',
+                  item.nombre,
                   style: TextStyle(fontSize: 25),
                 ),
               ),
@@ -69,20 +71,14 @@ class _itemState extends State<Item> {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 children: <Widget>[
+                  if(item.cantidad != "0")
                   Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                      " do eiusmod tempor incididunt ut labore et dolore magna "
-                      "aliqua. Ut enim ad minim veniam, quis nostrud "
-                      "exercitation ullamco laboris nisi ut aliquip ex ea "
-                      "commodo consequat."
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
-                      " do eiusmod tempor incididunt ut labore et dolore magna "
-                      "aliqua. Ut enim ad minim veniam, quis nostrud "
-                      "exercitation ullamco laboris nisi ut aliquip ex ea "
-                      "commodo consequat."),
+                      "Producto de " + item.cantidad + " Kg.\n\n"
+                  "~Consultar stock antes de comprar~"),
                 ],
               ),
-              Text('Precio: \$ 100,00', style: TextStyle(fontSize: 20)),
+              Text('Precio: \$ ' + item.precio.toString(), style: TextStyle(fontSize: 20)),
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -101,7 +97,8 @@ class _itemState extends State<Item> {
                 ],
               ),
             ],
-          )
+          ),
+          SizedBox(height: 20,),
         ]);
   }
 
@@ -134,6 +131,11 @@ class _itemState extends State<Item> {
             ],
           );
         });
+  }
+
+  MemoryImage _imagen(String imagen) {
+    var bytes = base64.decode(imagen);
+    return new MemoryImage(bytes);
   }
 
   void _mostrarMensaje(String msg) {
