@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
                 Image.asset(
                   'lib/assets/images/logoMorita2.png',
                   color: Colors.white,
-                  height: 150,
+                  height: 125,
                 ),
                 SizedBox(height: 20,),
                 Center(
@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
             height: 350,
           ),
           Transform.translate(
-            offset: Offset(0, -65),
+            offset: Offset(0, -50),
             child: (Center(
               child: SingleChildScrollView(
                 child: Card(

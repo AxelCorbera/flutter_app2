@@ -14,7 +14,10 @@ class Item extends StatefulWidget {
   _itemState createState() => _itemState();
 }
 
-class _itemState extends State<Item> {
+class _itemState extends State<Item> with TickerProviderStateMixin {
+  // late AnimationController controller;
+  // bool isPlaying = false;
+
   final _scaffKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +43,24 @@ class _itemState extends State<Item> {
     );
   }
 
+//   void toggleIcon()=> setState((){
+// isPlaying = !isPlaying;
+// isPlaying ? controller.forward() : controller.reverse();
+//   });
+  // ANIMATIONICON
+
   Widget cardConteiner(Marca item, BuildContext context) {
+    AnimationController controller = AnimationController(
+      vsync: this,
+    );
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           Center(
             child: FadeInImage(
               image: _imagen(item.imagen),
@@ -71,14 +85,18 @@ class _itemState extends State<Item> {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 children: <Widget>[
-                  if(item.cantidad != "0")
-                  Text(
-                      "Producto de " + item.cantidad + " Kg.\n\n"
-                  "~Consultar stock antes de comprar~"),
+                  if (item.cantidad != "0")
+                    Text("Producto de " +
+                        item.cantidad +
+                        " Kg.\n\n"
+                            "~Consultar stock antes de comprar~"),
                 ],
               ),
-              Text('Precio: \$ ' + item.precio.toString(), style: TextStyle(fontSize: 20)),
-              SizedBox(height: 20,),
+              Text('Precio: \$ ' + item.precio.toString(),
+                  style: TextStyle(fontSize: 20)),
+              SizedBox(
+                height: 20,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -91,14 +109,16 @@ class _itemState extends State<Item> {
                   RaisedButton.icon(
                       icon: Icon(Icons.add_shopping_cart),
                       label: Text('Agregar al carrito'),
-                      onPressed: () {
+                      onPressed: (){
                         _showDialog(context);
                       }),
                 ],
               ),
             ],
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
         ]);
   }
 
@@ -133,6 +153,21 @@ class _itemState extends State<Item> {
         });
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    // controller = AnimationController(
+    //   vsync: this,
+    //   duration: Duration(milliseconds: 1000),
+    // );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   MemoryImage _imagen(String imagen) {
     var bytes = base64.decode(imagen);
     return new MemoryImage(bytes);
@@ -140,7 +175,8 @@ class _itemState extends State<Item> {
 
   void _mostrarMensaje(String msg) {
     SnackBar snackBar = SnackBar(
-      content: Text(msg),
+      backgroundColor: Colors.greenAccent,
+      content: Text(msg,style: TextStyle(color: Colors.black),),
     );
     _scaffKey.currentState!.showSnackBar(snackBar);
   }
