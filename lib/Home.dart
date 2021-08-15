@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/globals.dart' as globals;
 
 class Home extends StatefulWidget {
   @override
@@ -33,14 +35,47 @@ class _HomeState extends State<Home> {
     'lib/assets/icons/urinary.png',
     'lib/assets/icons/pipette.png'
   ];
+  int carrito = globals.carrito.id.length;
 
   @override
   Widget build(BuildContext context) {
-    String urlImage = 'lib/assets/icons/dog-food-pet.png';
+    this.carrito = globals.carrito.id.length;
+    Actualizar();
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio'),
         backgroundColor: Theme.of(context).primaryColor,
+        actions: <Widget>[
+          RaisedButton(
+            color: Theme.of(context).primaryColor,
+            elevation: 0,
+            onPressed: () {
+              Navigator.of(context).pushNamed('/Cart');
+            },
+            child: Row(
+              children: [
+                Icon(Icons.shopping_cart,
+                size: 30,
+                color: Colors.white,),
+                if(carrito > 0)
+                Center(
+                  child: Container(
+                    width: 25,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
+                    child: Center(
+                        child: Text(
+                          carrito.toString(),
+                      style: TextStyle(fontSize: 22, color: Colors.white),
+                    )),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
       body: GridView.count(
         // crossAxisCount is the number of columns
@@ -49,8 +84,10 @@ class _HomeState extends State<Home> {
         children: List.generate(categoriasNombres.length, (index) {
           return InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(
-                  '/Category', arguments: argumentsHome(categoriasNombres[index]));
+              //Navigator.push( context, MaterialPageRoute( builder: (context) => SecondPage()), ).then((value) => setState(() {}));
+
+              Navigator.of(context).pushNamed('/Category',
+                  arguments: argumentsHome(categoriasNombres[index])).then((value) => setState((){}));
             },
             child: Hero(
               tag: categoriasIconos[index],
@@ -204,10 +241,18 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    carrito = globals.carrito.id.length;
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void Actualizar() {
+    this.carrito = globals.carrito.id.length;
+    setState(() {
+
+    });
   }
 }

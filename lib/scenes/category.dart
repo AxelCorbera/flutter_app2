@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_app2/scripts/request.dart';
+import 'package:flutter_app2/globals.dart' as globals;
 
 import '../Home.dart';
 
@@ -14,48 +15,41 @@ class Category extends StatefulWidget {
 
 class _categoryState extends State<Category> {
   List<String> marca = <String>[];
-  bool contenido = false;
   GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
+  int carrito = globals.carrito.id.length;
   @override
   Widget build(BuildContext context) {
-    String categoria = widget.categoria;
-    return _scaff(context, categoria, marca);
+    if (widget.categoria == "Alimentos") {
+      return _scaff(context, widget.categoria, marca);
+    } else {
+      return Scaffold(
+        body: FutureBuilder(
+          future: BuscarCategoria(widget.categoria),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<String>> snapshop) {
+            if (snapshop.hasData) {
+              return _scaff(context, widget.categoria, snapshop.data!);
+            } else {
+              return Scaffold(
+                  appBar: appbar(widget.categoria),
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ));
+            }
+          },
+        ),
+      );
+    }
   }
 
   @override
   void initState() {
-    if(widget.categoria != "Alimentos") {
-      new Future.delayed(Duration.zero, () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                  child: new Container(
-                    child: CircularProgressIndicator(color: Colors.blueAccent),
-                  ));
-            });
-      });
-    }
-    this.contenido = false;
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  List<String> listaCategorias = <String>[];
-
-  //  TERMINAR ACAAAAAAA
-
-  void buscar(BuildContext context, String categoria) async {
-    listaCategorias = await BuscarCategoria(categoria);
-    setState(() {
-      this.marca = listaCategorias;
-      if (listaCategorias.length > 0) contenido = true;
-      Navigator.of(context).pop();
-    });
   }
 
   static Route<Object?> _dialogBuilder(BuildContext context) {
@@ -81,10 +75,8 @@ class _categoryState extends State<Category> {
     if (categoria == "Alimentos") {
       return Scaffold(
         key: _keyScaf,
-        appBar: AppBar(
-          title: Text(categoria),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
+        //extendBodyBehindAppBar: true, //backgroundColor de APPBARR tiene que ser BLACK12
+        appBar: appbar(categoria),
         body: GridView.count(
           // crossAxisCount is the number of columns
           crossAxisCount: 2,
@@ -153,18 +145,16 @@ class _categoryState extends State<Category> {
       );
     } else {
       // CUANDO NO ES ALIMENTO
-      if (marcas.length == 0) buscar(context, categoria);
       return Scaffold(
-        appBar: AppBar(
-          title: Text(categoria),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
+        //extendBodyBehindAppBar: true, //backgroundColor de APPBARR tiene que ser BLACK12
+        appBar: appbar(categoria),
         body: ListView.builder(
             itemCount: marcas.length,
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/Items', arguments: argumentsItems(categoria, marcas[index], ""));
+                  Navigator.of(context).pushNamed('/Items',
+                      arguments: argumentsItems(categoria, marcas[index], ""));
                 },
                 child: Hero(
                   tag: marcas[index],
@@ -207,13 +197,51 @@ class _categoryState extends State<Category> {
       );
     }
   }
+
+  AppBar appbar(String title) {
+    return AppBar(
+        title: Text(title),
+        backgroundColor: Theme.of(context).primaryColor,
+        actions: <Widget>[
+          RaisedButton(
+            color: Theme.of(context).primaryColor,
+            elevation: 0,
+            onPressed: () {
+              Navigator.of(context).pushNamed('/Cart');
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.shopping_cart,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                if (carrito > 0)
+                  Center(
+                    child: Container(
+                      width: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: Center(
+                          child: Text(
+                        carrito.toString(),
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      )),
+                    ),
+                  ),
+              ],
+            ),
+          )
+        ]);
+  }
 }
 
-class argumentsItems{
+class argumentsItems {
   final String categoria;
   final String marca;
   final String? busqueda;
 
   argumentsItems(this.categoria, this.marca, this.busqueda);
 }
-

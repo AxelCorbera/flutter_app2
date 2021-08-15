@@ -6,8 +6,10 @@ import 'package:flutter_app2/scenes/shop.dart';
 import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
 import 'package:flutter_app2/scenes/register.dart';
+import 'package:flutter_app2/scenes/cart.dart';
 import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scripts/request.dart';
+import 'package:flutter_app2/globals.dart' as globals;
 
 void main() {
   runApp(MyApp());
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
               return Shop();
             case "/Login":
               return Login();
+            case "/Cart":
+              return Cart();
             case "/Item":
               final args = settings.arguments as Marca;
               return Item(item: args);

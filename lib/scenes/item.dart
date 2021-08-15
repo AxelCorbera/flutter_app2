@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scripts/request.dart';
+import 'package:flutter_app2/globals.dart' as globals;
 
 class Item extends StatefulWidget {
   const Item({Key? key, required this.item}) : super(key: key);
@@ -17,15 +19,15 @@ class Item extends StatefulWidget {
 class _itemState extends State<Item> with TickerProviderStateMixin {
   // late AnimationController controller;
   // bool isPlaying = false;
-
+  int carrito = globals.carrito.id.length;
   final _scaffKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffKey,
       backgroundColor: Colors.white38,
-      appBar: AppBar(
-        title: Text('Producto'),
-      ),
+      appBar: appbar("Producto"),
       body: Center(
         child: Hero(
           tag: widget.item.id,
@@ -109,7 +111,7 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                   RaisedButton.icon(
                       icon: Icon(Icons.add_shopping_cart),
                       label: Text('Agregar al carrito'),
-                      onPressed: (){
+                      onPressed: () {
                         _showDialog(context);
                       }),
                 ],
@@ -122,30 +124,73 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
         ]);
   }
 
+  AppBar appbar(String title) {
+    return AppBar(
+        title: Text(title),
+        backgroundColor: Theme.of(context).primaryColor,
+        actions: <Widget>[
+          RaisedButton(
+            color: Theme.of(context).primaryColor,
+            elevation: 0,
+            onPressed: () {
+              Navigator.of(context).pushNamed('/Cart');
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.shopping_cart,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                if (carrito > 0)
+                  Center(
+                    child: Container(
+                      width: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: Center(
+                          child: Text(
+                        carrito.toString(),
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      )),
+                    ),
+                  ),
+              ],
+            ),
+          )
+        ]);
+  }
+
   void _showDialog(BuildContext context) {
+    GlobalKey keyText = GlobalKey<EditableTextState>();
+    bool cant = false;
     final _textFieldController = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Cuantas unidades?'),
+            title: Text('¿Cuantas deseas llevar?'),
             content: TextField(
-              onChanged: (value) {},
+              key: keyText,
+              onChanged: (value) {
+                if(value.length>0){
+                  cant = true;
+                }
+              },
               controller: _textFieldController,
-              decoration: InputDecoration(labelText: '', hintText: "1"),
+              decoration: InputDecoration(labelText: 'cantidad', hintText: "1"),
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
               ButtonBar(
                 children: <Widget>[
-                  FloatingActionButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _mostrarMensaje('Producto añadido!');
-                    },
-                    child: Icon(Icons.done),
-                  )
+                  RaisedButton.icon(
+                      onPressed: cant?null:(){},
+                      icon: Icon(Icons.done),
+                      label: Text("Agregar")),
                 ],
               )
             ],
@@ -173,10 +218,27 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
     return new MemoryImage(bytes);
   }
 
+  void _agregarProducto(Marca item) {
+    globals.carrito.id.add(widget.item.id);
+    globals.carrito.codigo.add(widget.item.codigo);
+    globals.carrito.marca.add(widget.item.marca);
+    globals.carrito.nombre.add(widget.item.nombre);
+    globals.carrito.cantidad.add(widget.item.cantidad);
+    globals.carrito.stock.add(widget.item.stock);
+    globals.carrito.precio.add(widget.item.precio);
+    globals.carrito.imagen.add(widget.item.imagen);
+    globals.carrito.tamano!.add(widget.item.tamano);
+    globals.carrito.color.add(widget.item.color);
+  }
+
   void _mostrarMensaje(String msg) {
     SnackBar snackBar = SnackBar(
+      duration: Duration(seconds: 1),
       backgroundColor: Colors.greenAccent,
-      content: Text(msg,style: TextStyle(color: Colors.black),),
+      content: Text(
+        msg,
+        style: TextStyle(color: Colors.black),
+      ),
     );
     _scaffKey.currentState!.showSnackBar(snackBar);
   }
