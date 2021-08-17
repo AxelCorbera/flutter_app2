@@ -121,6 +121,33 @@ Future<Album> IniciarSesion(String email, String clave)async{
   }
 }
 
+Future<String> Registrarse(String name, String lastName, String email, String password)async{
+  Map map = new Map<String, dynamic>();
+  map['name'] = name;
+  map['lastname'] = lastName;
+  map['email'] = email;
+  map['password'] = password;
+
+  final response = await http.post(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/crearUsuario.php?'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: map,
+  );
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print(jsonDecode(response.body));
+    return response.body;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
 Future<List<String>> BuscarCategoria(String categoria)async{
   List<String> lista;
   Map map = new Map<String, dynamic>();

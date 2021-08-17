@@ -94,9 +94,9 @@ class _ItemsState extends State<Items> {
                                   ),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceAround,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: <Widget>[
                                       if (widget.categoria == 'alimentoPerro' ||
                                           widget.categoria == 'alimentoGato')
@@ -144,7 +144,7 @@ class _ItemsState extends State<Items> {
             color: Theme.of(context).primaryColor,
             elevation: 0,
             onPressed: () {
-              Navigator.of(context).pushNamed('/Cart');
+              Navigator.of(context).pushNamed('/Cart').then((value) => setState((){}));
             },
             child: Row(
               children: [

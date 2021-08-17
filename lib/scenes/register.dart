@@ -10,7 +10,9 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   bool _passwordVisible = false;
   bool _loading = false;
-  String userName = '';
+  String name = '';
+  String lastName = '';
+  String email = '';
   String password = '';
   String _errorMessage = "";
 
@@ -34,7 +36,7 @@ class _RegisterState extends State<Register> {
                 child: Image.asset(
                   'lib/assets/images/logoMorita2.png',
                   color: Colors.white,
-                  height: 140,
+                  height: 100,
                 ),
               ),
               SizedBox(
@@ -77,7 +79,7 @@ class _RegisterState extends State<Register> {
                             TextFormField(
                               decoration: InputDecoration(labelText: "Nombre:"),
                               onSaved: (value) {
-                                userName = value!;
+                                name = value!;
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -89,7 +91,7 @@ class _RegisterState extends State<Register> {
                               decoration:
                                   InputDecoration(labelText: "Apellido:"),
                               onSaved: (value) {
-                                userName = value!;
+                                lastName = value!;
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -100,7 +102,7 @@ class _RegisterState extends State<Register> {
                             TextFormField(
                               decoration: InputDecoration(labelText: "Email:"),
                               onSaved: (value) {
-                                userName = value!;
+                                email = value!;
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -146,6 +148,7 @@ class _RegisterState extends State<Register> {
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               onPressed: () {
                                 _loading;
+                                _registred(context);
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -200,26 +203,28 @@ class _RegisterState extends State<Register> {
         ));
   }
 
-  void _login(BuildContext context) async {
+  void _registred(BuildContext context) async {
     if (!_loading) {
       if (_keyForm.currentState!.validate()) {
         _keyForm.currentState!.save();
         setState(() {
           _loading = true;
         });
-        var token =
-            await request.IniciarSesion(userName, password);
-        print('tokeN ' + token.id.toString());
+        var resp =
+            await request.Registrarse(name, lastName, email, password);
         setState(() {
-          if (token.id != '' && token.id != '-1') {
+          if (resp != '1' && resp != '-1') {
             _loading = false;
-            _errorMessage = "";
-          } else if (token.id == '' && token.id != '-1') {
+            _errorMessage = "Error";
+            _mostrarMensaje('Ocurrio un error');
+          } else if (resp == '-1') {
             _loading = false;
-            _errorMessage = "Usuario y/o clave incorrecto";
-          } else if (token.id != '' && token.id == '-1') {
+            _errorMessage = "El Email ingresado ya esta en uso";
+            //_mostrarMensaje('El ingresayo ya esta en uso');
+          } else {
             _loading = false;
-            _mostrarMensaje('Error de conexion');
+            _errorMessage = '';
+            _mostrarMensaje('Usuario creado exitosamente!');
           }
         });
       }
@@ -227,15 +232,19 @@ class _RegisterState extends State<Register> {
       setState(() {
         _loading = false;
         _errorMessage = "";
-        print(userName + '>>' + password);
+        print(lastName + '>>' + name);
       });
     }
   }
 
-  void _mostrarMensaje(String msg) {
+  void _mostrarMensaje(String msg) async{
     SnackBar snackBar = SnackBar(
+      duration: Duration(seconds: 2),
       content: Text(msg),
+
     );
     _keyScaf.currentState!.showSnackBar(snackBar);
+    await Future.delayed(const Duration(seconds: 2), (){});
+    Navigator.pop(context);
   }
 }

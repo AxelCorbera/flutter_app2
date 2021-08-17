@@ -8,6 +8,8 @@ import 'package:flutter_app2/scenes/login.dart';
 import 'package:flutter_app2/scenes/register.dart';
 import 'package:flutter_app2/scenes/cart.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/support.dart';
+import 'package:flutter_app2/scenes/cards.dart';
 import 'package:flutter_app2/scripts/request.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 
@@ -54,6 +56,10 @@ class MyApp extends StatelessWidget {
               return Category(categoria: args.icono);
             case "/Register":
               return Register();
+            case "/Support":
+              return Support();
+            case "/Cards":
+              return Cards();
             default:
               return Login();
           }

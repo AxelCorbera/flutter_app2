@@ -59,6 +59,7 @@ flutter:
     - lib/assets/icons/toy.png
     - lib/assets/icons/urinary.png
     - lib/assets/icons/dog-food-pet.png
+    - lib/assets/icons/support.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

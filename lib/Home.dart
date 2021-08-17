@@ -50,28 +50,32 @@ class _HomeState extends State<Home> {
             color: Theme.of(context).primaryColor,
             elevation: 0,
             onPressed: () {
-              Navigator.of(context).pushNamed('/Cart');
+              Navigator.of(context)
+                  .pushNamed('/Cart')
+                  .then((value) => setState(() {}));
             },
             child: Row(
               children: [
-                Icon(Icons.shopping_cart,
-                size: 30,
-                color: Colors.white,),
-                if(carrito > 0)
-                Center(
-                  child: Container(
-                    width: 25,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red,
-                    ),
-                    child: Center(
-                        child: Text(
-                          carrito.toString(),
-                      style: TextStyle(fontSize: 22, color: Colors.white),
-                    )),
-                  ),
+                Icon(
+                  Icons.shopping_cart,
+                  size: 30,
+                  color: Colors.white,
                 ),
+                if (carrito > 0)
+                  Center(
+                    child: Container(
+                      width: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: Center(
+                          child: Text(
+                        carrito.toString(),
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      )),
+                    ),
+                  ),
               ],
             ),
           )
@@ -86,8 +90,10 @@ class _HomeState extends State<Home> {
             onTap: () {
               //Navigator.push( context, MaterialPageRoute( builder: (context) => SecondPage()), ).then((value) => setState(() {}));
 
-              Navigator.of(context).pushNamed('/Category',
-                  arguments: argumentsHome(categoriasNombres[index])).then((value) => setState((){}));
+              Navigator.of(context)
+                  .pushNamed('/Category',
+                      arguments: argumentsHome(categoriasNombres[index]))
+                  .then((value) => setState(() {}));
             },
             child: Hero(
               tag: categoriasIconos[index],
@@ -168,7 +174,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'shop');
+                _menu(context, 'home');
               },
             ),
             ListTile(
@@ -178,7 +184,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'mis mascotas');
+                globals.login ? null : _unlogin(context);
               },
             ),
             ListTile(
@@ -188,7 +194,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'ultimas compras');
+                globals.login ? null : _unlogin(context);
               },
             ),
             ListTile(
@@ -198,7 +204,10 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'mis tarjetas');
+                Navigator.pop(context);
+                globals.login
+                    ? Navigator.pushNamed(context, '/Cards')
+                    : _unlogin(context);
               },
             ),
             ListTile(
@@ -208,15 +217,25 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                _menu(context, 'support');
+                Navigator.pop(context);
+                globals.login
+                    ? Navigator.pushNamed(context, '/Support')
+                    : _unlogin(context);
               },
             ),
             ListTile(
-              title: Text('Cerrar sesion'),
-              leading: Icon(
-                Icons.close,
-                color: Colors.red,
-              ),
+              title: globals.login
+                  ? Text('Cerrar sesion')
+                  : Text('Iniciar sesion'),
+              leading: globals.login
+                  ? Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    )
+                  : Icon(
+                      Icons.open_in_browser,
+                      color: Colors.green,
+                    ),
               onTap: () {
                 Navigator.of(context).pushNamed('/');
               },
@@ -225,6 +244,41 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _unlogin(BuildContext context) {
+    GlobalKey keyText = GlobalKey<EditableTextState>();
+    final _textFieldController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text("Debes iniciar sesion"),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RaisedButton(
+                        child: Text("Aceptar"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
+                    RaisedButton(
+                        child: Text("Iniciar sesion"),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/');
+                        }),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   void _menu(BuildContext context, String pantalla) {
@@ -251,8 +305,6 @@ class _HomeState extends State<Home> {
 
   void Actualizar() {
     this.carrito = globals.carrito.id.length;
-    setState(() {
-
-    });
+    setState(() {});
   }
 }

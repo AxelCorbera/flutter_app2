@@ -108,12 +108,21 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                       label: Text(
                         'Consultar Stock',
                       ),
-                      onPressed: () {}),
+                      onPressed: () {
+                        if (globals.login) {
+                        } else {
+                          _unlogin(context);
+                        }
+                      }),
                   RaisedButton.icon(
                       icon: Icon(Icons.add_shopping_cart),
                       label: Text('Agregar al carrito'),
                       onPressed: () {
-                        _showDialog(context);
+                        if (globals.login) {
+                          _showDialog(context);
+                        } else {
+                          _unlogin(context);
+                        }
                       }),
                 ],
               ),
@@ -134,7 +143,9 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
             color: Theme.of(context).primaryColor,
             elevation: 0,
             onPressed: () {
-              Navigator.of(context).pushNamed('/Cart');
+              Navigator.of(context)
+                  .pushNamed('/Cart')
+                  .then((value) => setState(() {}));
             },
             child: Row(
               children: [
@@ -164,6 +175,41 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
         ]);
   }
 
+  void _unlogin(BuildContext context) {
+    GlobalKey keyText = GlobalKey<EditableTextState>();
+    final _textFieldController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text("Debes iniciar sesion"),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RaisedButton(
+                        child: Text("Aceptar"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
+                    RaisedButton(
+                        child: Text("Iniciar sesion"),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/');
+                        }),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   void _showDialog(BuildContext context) {
     GlobalKey keyText = GlobalKey<EditableTextState>();
     final _textFieldController = TextEditingController();
@@ -179,6 +225,12 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      Center(
+                          child: Text(
+                        '¿Cuantas unidades quieres llevar?',
+                        style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
+                      )),
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: TextFormField(

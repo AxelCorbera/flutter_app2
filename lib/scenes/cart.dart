@@ -8,13 +8,29 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   double total = 0;
-
+  bool editar = false;
   Widget build(BuildContext context) {
-    total = Sumar(globals.carrito.precio);
+    total = Sumar(globals.carrito.precio, globals.carrito.cantidad);
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
         title: Text("Mi Carrito"),
+        actions: <Widget>[
+          RaisedButton.icon(
+            elevation: 0,
+            color: Colors.transparent,
+            icon: Icon(
+              editar ? Icons.done : Icons.edit,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                editar = !editar;
+              });
+            },
+            label: Text(''),
+          ),
+        ],
       ),
       body: Column(children: <Widget>[
         Center(
@@ -29,11 +45,44 @@ class _CartState extends State<Cart> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         leading: Text(globals.carrito.cantidad[index]),
-                        title: Text(globals.carrito.marca[index].toString() +
-                            " " +
-                            globals.carrito.nombre[index].toString()),
-                        trailing:
-                            Text(globals.carrito.precio[index].toString()),
+                        title: Text(
+                          globals.carrito.marca[index].toString() +
+                              " " +
+                              globals.carrito.nombre[index].toString(),
+                          textAlign: TextAlign.start,
+                        ),
+                        trailing: editar
+                            ? ButtonBar(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                      onPressed: () {
+                                        int i = int.parse(
+                                            globals.carrito.cantidad[index]);
+                                        i++;
+                                        globals.carrito.cantidad[index] =
+                                            i.toString();
+                                        setState(() {});
+                                      },
+                                      icon: Icon(Icons.add)),
+                                  IconButton(
+                                      onPressed: () {
+                                        int i = int.parse(
+                                            globals.carrito.cantidad[index]);
+                                        if (i > 1) {
+                                          i--;
+                                        } else {
+                                          _eliminarArticulo(index);
+                                          setState(() {});
+                                        }
+                                        setState(() {});
+                                        globals.carrito.cantidad[index] =
+                                            i.toString();
+                                      },
+                                      icon: Icon(Icons.remove))
+                                ],
+                              )
+                            : Text(globals.carrito.precio[index].toString()),
                       );
                     })),
           ),
@@ -42,7 +91,8 @@ class _CartState extends State<Cart> {
           padding: const EdgeInsets.all(15.0),
           child: Text(
             "Total: " + total.toString(),
-            style: TextStyle(fontSize: 25,color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         Center(
@@ -62,10 +112,69 @@ class _CartState extends State<Cart> {
     );
   }
 
-  dynamic Sumar(List<dynamic> lista) {
+  void _eliminarArticulo(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Desea eliminar el articulo?',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(globals.carrito.marca[index] +
+                    ' ' +
+                    globals.carrito.nombre[index]),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    RaisedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.cancel),
+                        label: Text('Cancelar')),
+                    RaisedButton.icon(
+                        onPressed: () {
+                          globals.carrito.id.removeAt(index);
+                          globals.carrito.codigo.removeAt(index);
+                          globals.carrito.marca.removeAt(index);
+                          globals.carrito.nombre.removeAt(index);
+                          globals.carrito.cantidad.removeAt(index);
+                          globals.carrito.stock.removeAt(index);
+                          globals.carrito.precio.removeAt(index);
+                          globals.carrito.imagen.removeAt(index);
+                          globals.carrito.tamano!.removeAt(index);
+                          globals.carrito.color.removeAt(index);
+                          Navigator.pop(context);
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.done),
+                        label: Text('Eliminar')),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  dynamic Sumar(List<dynamic> lista, List<String> lista2) {
     double total = 0;
     lista.forEach((p) {
-      total = total + p;
+      int i = lista.indexOf(p);
+      var t = p * int.parse(lista2[i]);
+      total = total + t;
     });
     return total;
   }

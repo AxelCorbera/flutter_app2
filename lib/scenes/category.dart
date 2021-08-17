@@ -208,7 +208,7 @@ class _categoryState extends State<Category> {
             color: Theme.of(context).primaryColor,
             elevation: 0,
             onPressed: () {
-              Navigator.of(context).pushNamed('/Cart');
+              Navigator.of(context).pushNamed('/Cart').then((value) => setState((){}));
             },
             child: Row(
               children: [

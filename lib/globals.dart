@@ -1,5 +1,9 @@
 library flutter_app2.globals;
 
+bool login = false;
+
+int cards = 1;
+
 class Carrito {
   final List<String> id;
   final List<String> codigo;

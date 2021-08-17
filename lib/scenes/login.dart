@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/album.dart' as album;
+import 'package:flutter_app2/scripts/request.dart' as request;
+import 'package:flutter_app2/globals.dart' as globals;
 
 class Login extends StatefulWidget {
   @override
@@ -41,7 +43,7 @@ class _LoginState extends State<Login> {
                     child: Text(
                       'Moritas Shop',
                       style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 20,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     )),
@@ -139,7 +141,14 @@ class _LoginState extends State<Login> {
                                 textColor: Theme.of(context).primaryColor,
                                 child: Text('Registrarse'))
                           ],
-                        )
+                        ),
+                        FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/Home');
+                              globals.login=false;
+                            },
+                            textColor: Theme.of(context).primaryColor,
+                            child: Text('Ingresar sin cuenta'))
                       ],
                     ),
                   ),
@@ -165,6 +174,7 @@ class _LoginState extends State<Login> {
           if(token.id != '' && token.id != '-1'){
             _loading = false;
             _errorMessage = "";
+            globals.login=true;
             Navigator.of(context).pushNamed('/Home');
           }else if(token.id == '' && token.id != '-1'){
             _loading = false;
