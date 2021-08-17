@@ -28,7 +28,9 @@ class _ItemsState extends State<Items> {
     // if (!request) {
     //   _buscaritems(widget.categoria, widget.marca, widget.busqueda as String);
     // }
+    carrito = globals.carrito.id.length;
     return Scaffold(
+
       appBar: appbar(widget.marca),
       body: FutureBuilder(
           future: Buscaritems(
@@ -54,7 +56,7 @@ class _ItemsState extends State<Items> {
                               snapshot.data!.precio[index],
                               snapshot.data!.imagen[index],
                               snapshot.data!.tamano![index],
-                              snapshot.data!.color[index]));
+                              snapshot.data!.color[index])).then((value) => setState((){}));
                     },
                     child: Hero(
                       tag: snapshot.data!.id[index],

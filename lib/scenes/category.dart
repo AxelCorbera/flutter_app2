@@ -19,6 +19,7 @@ class _categoryState extends State<Category> {
   int carrito = globals.carrito.id.length;
   @override
   Widget build(BuildContext context) {
+    carrito = globals.carrito.id.length;
     if (widget.categoria == "Alimentos") {
       return _scaff(context, widget.categoria, marca);
     } else {
@@ -93,7 +94,7 @@ class _categoryState extends State<Category> {
                   categ = "cereales";
                 }
                 Navigator.of(context)
-                    .pushNamed('/Category', arguments: argumentsHome(categ));
+                    .pushNamed('/Category', arguments: argumentsHome(categ)).then((value) => setState((){}));
                 // print('envia ' + categoriasNombres[index].toString());
               },
               child: Hero(
@@ -154,7 +155,7 @@ class _categoryState extends State<Category> {
               return InkWell(
                 onTap: () {
                   Navigator.of(context).pushNamed('/Items',
-                      arguments: argumentsItems(categoria, marcas[index], ""));
+                      arguments: argumentsItems(categoria, marcas[index], "")).then((value) => setState((){}));
                 },
                 child: Hero(
                   tag: marcas[index],

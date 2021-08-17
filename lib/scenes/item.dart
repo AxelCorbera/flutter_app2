@@ -17,13 +17,14 @@ class Item extends StatefulWidget {
 }
 
 class _itemState extends State<Item> with TickerProviderStateMixin {
-  // late AnimationController controller;
-  // bool isPlaying = false;
+  bool cant = false;
   int carrito = globals.carrito.id.length;
   final _scaffKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    print("> " + cant.toString());
     return Scaffold(
       key: _scaffKey,
       backgroundColor: Colors.white38,
@@ -165,35 +166,64 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
 
   void _showDialog(BuildContext context) {
     GlobalKey keyText = GlobalKey<EditableTextState>();
-    bool cant = false;
     final _textFieldController = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('¿Cuantas deseas llevar?'),
-            content: TextField(
-              key: keyText,
-              onChanged: (value) {
-                if(value.length>0){
-                  cant = true;
-                }
-              },
-              controller: _textFieldController,
-              decoration: InputDecoration(labelText: 'cantidad', hintText: "1"),
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
+            content: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _textFieldController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'cantidad',
+                          ),
+                          validator: (String? value) {
+                            return value!.isEmpty
+                                ? 'El campo esta vacio'
+                                : value == "0"
+                                    ? 'Seleccione una cantidad valida'
+                                    : value.contains(',') ||
+                                            value.contains('.') ||
+                                            value.contains('-') ||
+                                            value.contains(' ')
+                                        ? 'Seleccione una cantidad valida'
+                                        : null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: RaisedButton(
+                          child: Text("Agregar"),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              setState(() {
+                                _agregarProducto(
+                                    widget.item, _textFieldController.text);
+                                _mostrarMensaje("El producto se ha añadido!");
+                                Navigator.pop(context);
+                                carrito = globals.carrito.id.length;
+                              });
+                            }
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-            actions: <Widget>[
-              ButtonBar(
-                children: <Widget>[
-                  RaisedButton.icon(
-                      onPressed: cant?null:(){},
-                      icon: Icon(Icons.done),
-                      label: Text("Agregar")),
-                ],
-              )
-            ],
           );
         });
   }
@@ -218,17 +248,40 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
     return new MemoryImage(bytes);
   }
 
-  void _agregarProducto(Marca item) {
-    globals.carrito.id.add(widget.item.id);
-    globals.carrito.codigo.add(widget.item.codigo);
-    globals.carrito.marca.add(widget.item.marca);
-    globals.carrito.nombre.add(widget.item.nombre);
-    globals.carrito.cantidad.add(widget.item.cantidad);
-    globals.carrito.stock.add(widget.item.stock);
-    globals.carrito.precio.add(widget.item.precio);
-    globals.carrito.imagen.add(widget.item.imagen);
-    globals.carrito.tamano!.add(widget.item.tamano);
-    globals.carrito.color.add(widget.item.color);
+  void _agregarProducto(Marca item, String cant) {
+    if (globals.carrito.marca.contains(item.marca)) {
+      int i = globals.carrito.marca.indexOf(item.marca);
+      if (globals.carrito.id[i] == item.id &&
+          globals.carrito.nombre[i] == item.nombre) {
+        var cant1 = int.parse(globals.carrito.cantidad[i]);
+        var cant2 = int.parse(cant);
+        var total = cant1 + cant2;
+        print('total: $total');
+        globals.carrito.cantidad[i] = total.toString();
+      } else {
+        globals.carrito.id.add(widget.item.id);
+        globals.carrito.codigo.add(widget.item.codigo);
+        globals.carrito.marca.add(widget.item.marca);
+        globals.carrito.nombre.add(widget.item.nombre);
+        globals.carrito.cantidad.add(cant);
+        globals.carrito.stock.add(widget.item.stock);
+        globals.carrito.precio.add(widget.item.precio);
+        globals.carrito.imagen.add(widget.item.imagen);
+        globals.carrito.tamano!.add(widget.item.tamano);
+        globals.carrito.color.add(widget.item.color);
+      }
+    } else {
+      globals.carrito.id.add(widget.item.id);
+      globals.carrito.codigo.add(widget.item.codigo);
+      globals.carrito.marca.add(widget.item.marca);
+      globals.carrito.nombre.add(widget.item.nombre);
+      globals.carrito.cantidad.add(cant);
+      globals.carrito.stock.add(widget.item.stock);
+      globals.carrito.precio.add(widget.item.precio);
+      globals.carrito.imagen.add(widget.item.imagen);
+      globals.carrito.tamano!.add(widget.item.tamano);
+      globals.carrito.color.add(widget.item.color);
+    }
   }
 
   void _mostrarMensaje(String msg) {
