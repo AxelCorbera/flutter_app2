@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
+import 'package:flutter_app2/scripts/request.dart' as request;
 
 class Home extends StatefulWidget {
   @override
@@ -40,10 +43,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     this.carrito = globals.carrito.id.length;
-    Actualizar();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inicio'),
+        title: globals.login
+            ? Text('Bienvenido ' + globals.usuario!.nombre.toString() + "!")
+            : Text("Inicio"),
         backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
           RaisedButton(
@@ -296,6 +300,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     carrito = globals.carrito.id.length;
+    if (globals.login) {
+      //_buscarTarjetas();
+      _buscarCustomer();
+    }
   }
 
   @override
@@ -303,8 +311,16 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  void Actualizar() {
-    this.carrito = globals.carrito.id.length;
-    setState(() {});
+  void _buscarTarjetas() async {
+    List<Cards> tarjetas =
+        await request.BuscarTarjetas("760123073-zhFNkEPBmU7Eo2");
+    if (tarjetas[0].error != null) {
+      print('error: ' + tarjetas[0].error.toString());
+    }
+  }
+
+  void _buscarCustomer() async {
+    FindCustomer customer = await request.BuscarCustomer("test@hotmail.com");
+    print('results: ' + customer.results!.length.toString());
   }
 }

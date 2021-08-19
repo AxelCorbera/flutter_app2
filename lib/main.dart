@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
 import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scenes/shop.dart';
@@ -60,6 +61,8 @@ class MyApp extends StatelessWidget {
               return Support();
             case "/Cards":
               return Cards();
+            case "/AddCard":
+              return AddCard();
             default:
               return Login();
           }

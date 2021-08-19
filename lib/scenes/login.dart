@@ -3,6 +3,7 @@ import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/album.dart' as album;
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:flutter_app2/scripts/request.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -19,174 +20,187 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _keyScaf,
+        key: _keyScaf,
         body: Form(
-      key: _keyForm,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 70),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              colors: [Colors.greenAccent, Colors.blueAccent],
-            )),
-            child: Column(
-              children: [
-                Image.asset(
-                  'lib/assets/images/logoMorita2.png',
-                  color: Colors.white,
-                  height: 125,
-                ),
-                SizedBox(height: 20,),
-                Center(
-                    child: Text(
+          key: _keyForm,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 70),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  colors: [Colors.greenAccent, Colors.blueAccent],
+                )),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'lib/assets/images/logoMorita2.png',
+                      color: Colors.white,
+                      height: 125,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                        child: Text(
                       'Moritas Shop',
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     )),
-              ],
-            ),
-            height: 350,
-          ),
-          Transform.translate(
-            offset: Offset(0, -50),
-            child: (Center(
-              child: SingleChildScrollView(
-                child: Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 260),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: InputDecoration(labelText: "Email:"),
-                          onSaved: (value) {
-                            userName = value!;
-                          },
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Este campo es obligatorio';
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(labelText: "Contraseña:"),
-                          obscureText: true,
-                          onSaved: (value) {
-                            password = value!;
-                          },
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Este campo es obligatorio';
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        RaisedButton(
-                          color: Theme.of(context).primaryColor,
-                          textColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          onPressed: () {
-                            _login(context);
-                            _loading;
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text("Iniciar sesion"),
-                              if (_loading)
-                                Container(
-                                  height: 20,
-                                  width: 20,
-                                  margin: const EdgeInsets.only(left: 20),
-                                  child: CircularProgressIndicator(color: Colors.white,),
-                                )
-                            ],
-                          ),
-                        ),
-                        if (_errorMessage.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Text(
-                              _errorMessage,
-                              style: TextStyle(
-                                  color: Colors.red, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  ],
+                ),
+                height: 350,
+              ),
+              Transform.translate(
+                offset: Offset(0, -50),
+                child: (Center(
+                  child: SingleChildScrollView(
+                    child: Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      margin:
+                          const EdgeInsets.only(left: 20, right: 20, top: 260),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 35, vertical: 20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text('No estas registrado?'),
+                            TextFormField(
+                              decoration: InputDecoration(labelText: "Email:"),
+                              onSaved: (value) {
+                                userName = value!;
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Este campo es obligatorio';
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              decoration:
+                                  InputDecoration(labelText: "Contraseña:"),
+                              obscureText: true,
+                              onSaved: (value) {
+                                password = value!;
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Este campo es obligatorio';
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              textColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              onPressed: () {
+                                _login(context);
+                                _loading;
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text("Iniciar sesion"),
+                                  if (_loading)
+                                    Container(
+                                      height: 20,
+                                      width: 20,
+                                      margin: const EdgeInsets.only(left: 20),
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ),
+                            if (_errorMessage.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Text(
+                                  _errorMessage,
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text('No estas registrado?'),
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pushNamed('/Register');
+                                    },
+                                    textColor: Theme.of(context).primaryColor,
+                                    child: Text('Registrarse'))
+                              ],
+                            ),
                             FlatButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushNamed('/Register');
+                                  Navigator.of(context).pushNamed('/Home');
+                                  globals.login = false;
                                 },
                                 textColor: Theme.of(context).primaryColor,
-                                child: Text('Registrarse'))
+                                child: Text('Ingresar sin cuenta'))
                           ],
                         ),
-                        FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed('/Home');
-                              globals.login=false;
-                            },
-                            textColor: Theme.of(context).primaryColor,
-                            child: Text('Ingresar sin cuenta'))
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            )),
-          )
-        ],
-      ),
-    ));
+                )),
+              )
+            ],
+          ),
+        ));
   }
 
-  void _login(BuildContext context) async{
+  void _login(BuildContext context) async {
     if (!_loading) {
-      if(_keyForm.currentState!.validate()){
+      if (_keyForm.currentState!.validate()) {
         _keyForm.currentState!.save();
         setState(() {
           _loading = true;
         });
-        request.Album token= await request.IniciarSesion(userName, password);
+        request.Album token = await request.IniciarSesion(userName, password);
         print('tokeN ' + token.id.toString());
+
+        if (token.id != '' && token.id != '-1') {
+          Usuario usuario = await request.DatosUsuario(token.id, token.token);
+          globals.usuario!.nombre = usuario.nombre;
+        }
+
         setState(() {
-          if(token.id != '' && token.id != '-1'){
+          if (token.id != '' && token.id != '-1') {
             _loading = false;
             _errorMessage = "";
-            globals.login=true;
+            globals.login = true;
             Navigator.of(context).pushNamed('/Home');
-          }else if(token.id == '' && token.id != '-1'){
+          } else if (token.id == '' && token.id != '-1') {
             _loading = false;
             _errorMessage = "Usuario y/o clave incorrecto";
-          }else if(token.id != '' && token.id == '-1'){
+          } else if (token.id != '' && token.id == '-1') {
             _loading = false;
             _mostrarMensaje('Error de conexion');
           }
-
         });
       }
-    }else{
+    } else {
       setState(() {
         _loading = false;
         _errorMessage = "";
@@ -202,4 +216,3 @@ class _LoginState extends State<Login> {
     _keyScaf.currentState!.showSnackBar(snackBar);
   }
 }
-
