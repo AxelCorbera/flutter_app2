@@ -8,6 +8,17 @@ class Cards extends StatefulWidget {
 }
 
 class _CardsState extends State<Cards> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (globals.cards > 0) {
@@ -84,7 +95,7 @@ class _CardsState extends State<Cards> {
                                     Padding(
                                         padding: EdgeInsets.all(0),
                                         child: Text(
-                                          'ROCIO BELEN MARCENARO',
+                                          '',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.white),
@@ -159,15 +170,5 @@ class _CardsState extends State<Cards> {
             }),
       );
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
