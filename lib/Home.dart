@@ -4,6 +4,7 @@ import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
+import 'package:flutter_app2/scripts/mercadopago/mercadoPago.dart' as mp;
 
 class Home extends StatefulWidget {
   @override
@@ -243,7 +244,18 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.of(context).pushNamed('/');
               },
-            )
+            ),
+            ListTile(
+              title: Text('TOKEN'),
+              leading: Icon(
+                Icons.vpn_key,
+                color: Theme.of(context).primaryColor,
+              ),
+              onTap: () {
+                //Navigator.pop(context);
+                mp.CardToken();
+              },
+            ),
           ],
         ),
       ),

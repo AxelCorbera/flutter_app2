@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_app2/scripts/album.dart';
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
 import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
-
 import 'mercadopago/customerJson.dart';
 
 class Album {
@@ -33,6 +34,50 @@ class Categorias {
     return new Categorias(
       cate: streetsList,
     );
+  }
+}
+
+class Credenciales {
+  String? id;
+  String? fecha;
+  String? usuario;
+  String? codigoAutorizacion;
+  String? accessToken;
+  String? refreshToken;
+  String? userId;
+  String? numero;
+
+  Credenciales(
+      this.id,
+      this.fecha,
+      this.usuario,
+      this.codigoAutorizacion,
+      this.accessToken,
+      this.refreshToken,
+      this.userId,
+      this.numero,
+);
+
+  factory Credenciales.fromJson(Map<String, dynamic> json) {
+    var idJson = json['id'];
+    var fechaJson = json['fecha'];
+    var usuarioJson = json['usuario'];
+    var codigoAutorizacionJson = json['codigoAutorizacion'];
+    var accessTokenJson = json['accessToken'];
+    var refreshTokenJson = json['refreshToken'];
+    var userIdJson = json['userId'];
+    var numeroJson = json['numero'];
+
+    return new Credenciales(
+        idJson,
+        fechaJson,
+        usuarioJson,
+        codigoAutorizacionJson,
+        accessTokenJson,
+        refreshTokenJson,
+        userIdJson,
+        numeroJson,
+        );
   }
 }
 
@@ -189,7 +234,6 @@ Future<Album> IniciarSesion(String email, String clave) async {
   Map map = new Map<String, dynamic>();
   map['email'] = email;
   map['clave'] = clave;
-
   final response = await http.post(
     Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/consultaToken.php?'),
     headers: <String, String>{
@@ -214,7 +258,6 @@ Future<Usuario> DatosUsuario(String id, String token) async {
   Map map = new Map<String, dynamic>();
   map['id'] = id;
   map['token'] = token;
-
   final response = await http.post(
     Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/ingreso.php?'),
     headers: <String, String>{
@@ -226,6 +269,7 @@ Future<Usuario> DatosUsuario(String id, String token) async {
   if (response.statusCode == 200) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
+    print(jsonDecode(response.body));
     return Usuario.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
@@ -372,3 +416,64 @@ Future<FindCustomer> BuscarCustomer(String email) async {
     throw Exception('Failed to create album.');
   }
 }
+
+Future<cuotas.Cuotas> Cuotas(String bin, String total) async {
+
+  Map map = new Map<String, dynamic>();
+  map['bin'] = bin;
+  map['total'] = total;
+  if(globals.accessToken == ""){
+    Credenciales cred = await Claves('MoritasPet');
+    globals.accessToken = cred.accessToken.toString();
+    map['access_token'] = cred.accessToken.toString();
+  }else {
+    map['access_token'] = globals.accessToken;
+  }
+
+  final response = await http.post(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/cuotas.php?'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: map,
+  );
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('map ' + map.values.toString());
+    print('CUOTAS ' + jsonDecode(response.body).toString());
+    return cuotas.Cuotas.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
+Future<Credenciales> Claves(String usuario) async {
+
+  Map map = new Map<String, dynamic>();
+  map['usuario'] = usuario;
+
+  final response = await http.post(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/credenciales.php?'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: map,
+  );
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('credenciales ' + jsonDecode(response.body).toString());
+    return Credenciales.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
+

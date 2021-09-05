@@ -1,5 +1,7 @@
 import 'dart:math';
-
+import 'package:flutter/services.dart';
+import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart';
+import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
@@ -14,14 +16,19 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
   final _textFieldControllerName = TextEditingController();
   final _textFieldControllerExpire = TextEditingController();
   final _textFieldControllerSecCode = TextEditingController();
+  final _textFieldControllerDocument = TextEditingController();
   GlobalKey<FormState> _keyForm = GlobalKey();
   String numero = "**** **** **** ****";
+  String documento = "** *** ***";
   String cvv = "***";
   String nombre = "NOMBRE APELLIDO";
   String vencimiento = "--/--";
+  Cuotas cuotas = Cuotas();
+  String metodoPago = "";
   int caracteres = 0;
   int caracteres2 = 0;
   int caracteres3 = 0;
+  int caracteres4 = 0;
   int fase = 0;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -45,7 +52,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nueva tarjeta'),
+        title: Text('Agregar tarjeta - Paso ' + (fase+1).toString() + '/3'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
@@ -60,14 +67,20 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                     transform: Matrix4.identity()
                       ..setEntry(3, 2, 0.002)
                       ..rotateY(pi * _animation.value),
-                    child:
-                        _animation.value <= 0.5 ? _cardFront() : _cardBack()),
+                    child: fase == 2
+                        ? _documento()
+                        : _animation.value <= 0.5
+                            ? _cardFront()
+                            : _cardBack()),
               ),
             ),
             Form(
-              key: _keyForm,
-              child: fase==0?_infoCard():_cvv()
-            ),
+                key: _keyForm,
+                child: fase == 0
+                    ? _infoCard()
+                    : (fase == 1)
+                        ? _cvv()
+                        : infoDocumento()),
           ],
         ),
       ),
@@ -79,45 +92,49 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  Widget _infoCard(){
+  Widget _infoCard() {
     return Card(
       elevation: 5,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Column(children: <Widget>[
           TextFormField(
+            keyboardType: TextInputType.number,
             maxLength: 19,
             controller: _textFieldControllerNumber,
-            decoration:
-            InputDecoration(labelText: "Numero de la tarjeta:"),
+            decoration: InputDecoration(labelText: "Numero de la tarjeta:"),
             onChanged: (value) {
               _keyForm.currentState!.save();
             },
-            onSaved: (value) {
-              if (_textFieldControllerNumber.value.text.length < caracteres && _textFieldControllerNumber.value.text.length == 4 ||
-                  _textFieldControllerNumber.value.text.length <
-                      caracteres &&
-                      _textFieldControllerNumber.value.text.length ==
-                          9 ||
-                  _textFieldControllerNumber.value.text.length <
-                      caracteres &&
-                      _textFieldControllerNumber.value.text.length ==
-                          14) {
-              } else if (_textFieldControllerNumber
-                  .value.text.length ==
-                  4 ||
+            onSaved: (value) async {
+              if(_textFieldControllerNumber.value.text.length==7 &&
+                  _textFieldControllerNumber.value.text.length > caracteres)
+              {
+                cuotas = await request.Cuotas(_textFieldControllerNumber.value.text.replaceAll(" ", ""), "1000");
+                _MetodoPago(cuotas.paymentMethodId as String);
+              }
+
+              if(_textFieldControllerNumber.value.text.length<7 &&
+                  _textFieldControllerNumber.value.text.length < caracteres){
+                cuotas = Cuotas();
+                metodoPago = "";
+              }
+
+              if (_textFieldControllerNumber.value.text.length < caracteres &&
+                      _textFieldControllerNumber.value.text.length == 4 ||
+                  _textFieldControllerNumber.value.text.length < caracteres &&
+                      _textFieldControllerNumber.value.text.length == 9 ||
+                  _textFieldControllerNumber.value.text.length < caracteres &&
+                      _textFieldControllerNumber.value.text.length == 14) {
+              } else if (_textFieldControllerNumber.value.text.length == 4 ||
                   _textFieldControllerNumber.value.text.length == 9 ||
-                  _textFieldControllerNumber.value.text.length ==
-                      14) {
+                  _textFieldControllerNumber.value.text.length == 14) {
                 _textFieldControllerNumber.text =
                     _textFieldControllerNumber.value.text + " ";
                 _textFieldControllerNumber
-                  ..selection = TextSelection.fromPosition(
-                      TextPosition(
-                          offset: _textFieldControllerNumber
-                              .text.length));
+                  ..selection = TextSelection.fromPosition(TextPosition(
+                      offset: _textFieldControllerNumber.text.length));
               }
               String a = "**** **** **** ****";
               numero = a.replaceRange(
@@ -126,10 +143,9 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                   _textFieldControllerNumber.value.text);
 
               setState(() {
-                caracteres =
-                    _textFieldControllerNumber.value.text.length;
-                print(_textFieldControllerNumber.value.text);
-                print(numero);
+                caracteres = _textFieldControllerNumber.value.text.length;
+                //print(_textFieldControllerNumber.value.text);
+                //print(numero);
               });
             },
             validator: (value) {
@@ -140,16 +156,14 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
           ),
           TextFormField(
             controller: _textFieldControllerName,
-            decoration:
-            InputDecoration(labelText: "Nombre del titular:"),
+            decoration: InputDecoration(labelText: "Nombre del titular:"),
             onChanged: (value) {
               _keyForm.currentState!.save();
             },
             onSaved: (value) {
               String a = "NOMBRE APELLIDO";
               if (_textFieldControllerName.value.text.length > 0) {
-                nombre =
-                    _textFieldControllerName.value.text.toUpperCase();
+                nombre = _textFieldControllerName.value.text.toUpperCase();
               } else {
                 nombre = a;
               }
@@ -170,19 +184,14 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
               _keyForm.currentState!.save();
             },
             onSaved: (value) {
-              if (_textFieldControllerExpire.value.text.length <
-                  caracteres2 &&
+              if (_textFieldControllerExpire.value.text.length < caracteres2 &&
                   _textFieldControllerExpire.value.text.length == 2) {
-              } else if (_textFieldControllerExpire
-                  .value.text.length ==
-                  2) {
+              } else if (_textFieldControllerExpire.value.text.length == 2) {
                 _textFieldControllerExpire.text =
                     _textFieldControllerExpire.value.text + "/";
                 _textFieldControllerExpire
-                  ..selection = TextSelection.fromPosition(
-                      TextPosition(
-                          offset: _textFieldControllerExpire
-                              .text.length));
+                  ..selection = TextSelection.fromPosition(TextPosition(
+                      offset: _textFieldControllerExpire.text.length));
               }
               String a = "--/--";
               vencimiento = a.replaceRange(
@@ -191,10 +200,9 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                   _textFieldControllerExpire.value.text);
 
               setState(() {
-                caracteres2 =
-                    _textFieldControllerExpire.value.text.length;
-                print(_textFieldControllerExpire.value.text);
-                print(vencimiento);
+                caracteres2 = _textFieldControllerExpire.value.text.length;
+                //print(_textFieldControllerExpire.value.text);
+                //print(vencimiento);
               });
             },
             validator: (value) {
@@ -209,7 +217,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                 onPressed: () {
                   fase = 1;
                   //if (_animationStatus == AnimationStatus.dismissed) {
-                    _animationController.forward();
+                  _animationController.forward();
                   //} else {
                   //  _animationController.reverse();
                   //}
@@ -228,11 +236,10 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _cvv(){
+  Widget _cvv() {
     return Card(
       elevation: 5,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Column(children: <Widget>[
@@ -241,20 +248,23 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
             obscureText: false,
             maxLength: 4,
             controller: _textFieldControllerSecCode,
-            decoration:
-            InputDecoration(labelText: "Codigo de seguridad:"),
+            decoration: InputDecoration(labelText: "Codigo de seguridad:"),
             onChanged: (value) {
               _keyForm.currentState!.save();
             },
             onSaved: (value) {
               print(_textFieldControllerSecCode.value.text.length);
-              String a  = "";
-              for(int b = 0; b<_textFieldControllerSecCode.value.text.length;b++){
+              String a = "";
+              for (int b = 0;
+                  b < _textFieldControllerSecCode.value.text.length;
+                  b++) {
                 a = a + "*";
               }
+              if (a == "") {
+                a = "***";
+              }
               setState(() {
-                cvv =
-                    a;
+                cvv = a;
               });
             },
             validator: (value) {
@@ -267,11 +277,13 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
             children: <Widget>[
               FlatButton(
                 onPressed: () {
-                  fase = 0;
+                  fase--;
+                  setState(() {});
+                  print(fase);
                   //if (_animationStatus == AnimationStatus.dismissed) {
                   //  _animationController.forward();
                   //} else {
-                    _animationController.reverse();
+                  _animationController.reverse();
                   //}
                 },
                 child: Text(
@@ -283,7 +295,10 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
               ),
               FlatButton(
                 onPressed: () {
-
+                  fase++;
+                  _animationController.reverse();
+                  setState(() {});
+                  print(fase);
                 },
                 child: Text(
                   "Siguiente",
@@ -320,16 +335,18 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                 width: 90,
                 height: 60,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                        colors: [Colors.white, Colors.white])),
+                    image: metodoPago!=""?DecorationImage(
+                      image: new AssetImage(metodoPago),
+                        fit: BoxFit.contain,
+                    ):null,
+                     borderRadius: BorderRadius.circular(10),
+                                      gradient: LinearGradient(
+                                          begin: Alignment.bottomLeft,
+                                          end: Alignment.topRight,
+                                          colors: [Colors.white70, Colors.white70])
+                                       ),
               ),
             ]),
-            SizedBox(
-              height: 10,
-            ),
             Row(children: <Widget>[
               SizedBox(
                 width: 23,
@@ -381,17 +398,19 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                 end: Alignment.topRight,
                 colors: [Colors.orangeAccent, Colors.deepOrangeAccent])),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Row(mainAxisSize: MainAxisSize.min,
-                //crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  SizedBox(
-                    height: 100,
-                  ),
-                  Container(
+            SizedBox(
+              height: 30,
+            ),
+            Expanded(
+                child: ConstrainedBox(
+                    constraints: const BoxConstraints.tightFor(
+                        width: double.infinity,),
+                  child: Container(
                     alignment: Alignment.center,
-                    width: 385,
-                    height: 50,
+                    width: double.infinity,
+                    height: 30,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(0),
                         gradient: LinearGradient(
@@ -399,7 +418,13 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                             end: Alignment.topRight,
                             colors: [Colors.black, Colors.black])),
                   ),
-                ]),
+                    )),
+            SizedBox(
+              height: 30,
+            ),
+            SizedBox(
+              height: 10,
+            ),
             Row(mainAxisSize: MainAxisSize.min,
                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -432,9 +457,204 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                             colors: [Colors.grey, Colors.blueGrey])),
                   ),
                 ]),
+            SizedBox(
+              height: 60,
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget infoDocumento() {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Column(children: <Widget>[
+          TextFormField(
+            keyboardType: TextInputType.number,
+            maxLength: 10,
+            controller: _textFieldControllerDocument,
+            decoration: InputDecoration(labelText: "Numero de documento:"),
+            onChanged: (value) {
+              _keyForm.currentState!.save();
+            },
+            onSaved: (value) {
+              if (_textFieldControllerDocument.value.text.length == 2
+                  && caracteres4<_textFieldControllerDocument.value.text.length
+              || _textFieldControllerDocument.value.text.length == 6
+                      && caracteres4<_textFieldControllerDocument.value.text.length) {
+                _textFieldControllerDocument.text =
+                    _textFieldControllerDocument.value.text + ".";
+                _textFieldControllerDocument
+                  ..selection = TextSelection.fromPosition(TextPosition(
+                      offset: _textFieldControllerDocument.text.length));
+              }
+              String a = "** *** ***";
+              documento = a.replaceRange(
+                  0,
+                  _textFieldControllerDocument.value.text.length,
+                  _textFieldControllerDocument.value.text);
+              setState(() {
+                caracteres4 = _textFieldControllerDocument.value.text.length;
+              });
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Este campo es obligatorio';
+              }
+            },
+          ),
+          ButtonBar(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  fase--;
+                  _animationController.forward();
+                  setState(() {});
+                  //if (_animationStatus == AnimationStatus.dismissed) {
+                  //} else {
+                  //  _animationController.reverse();
+                  //}
+                },
+                child: Text(
+                  "Anterior",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              RaisedButton(
+                onPressed: () {
+                  //
+                  // AGREGAR TARJETA
+                  //
+                },
+                color: Theme.of(context).primaryColor,
+                child: Text(
+                  "Agregar",
+                  style: TextStyle(
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ]),
+      ),
+    );
+  }
+
+  Widget _documento() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 5,
+      //color: Colors.grey[300],
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [Colors.grey, Colors.blueGrey])),
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(children: <Widget>[
+                Container(
+                  child: Image.asset(
+                    'lib/assets/icons/avatarDocumento.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                  height: 90,
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+                Text('NUMERO DE \n DOCUMENTO DE \n IDENTIDAD',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    )),
+              ]),
+            ),
+            Row(children: <Widget>[
+              SizedBox(
+                width: 150,
+              ),
+              Transform(
+                transform: Matrix4.translationValues(0, -20, 0),
+                child: Text(
+                  documento,
+                  style: TextStyle(fontSize: 35, color: Colors.white),
+                ),
+              )
+            ]),
+            Row(children: <Widget>[
+              SizedBox(
+                width: 10,
+              ),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _MetodoPago(String id){
+
+    switch(id){
+      case "diners":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/diners.png';
+        return;
+      case "argencard":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/argencard.jpg';
+        return;
+      case "maestro":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/maestro.png';
+        return;
+      case "debvisa":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/visadebito.jpg';
+        return;
+      case "cencosud":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/cencosud.jpg';
+        return;
+      case "debcabal":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/cabalDebito.jpg';
+        return;
+      case "visa":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/visa.png';
+        return;
+      case "master":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/master.png';
+        return;
+      case "amex":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/amex.png';
+        return;
+      case "naranja":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/naranja.png';
+        return;
+      case "tarshop":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/shopping.png';
+        return;
+      case "cabal":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/cabal.png';
+        return;
+      case "debmaster":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/master.png';
+        return;
+      case "cordobesa":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/cordobesa.jpg';
+        return;
+      case "cmr":
+        metodoPago = 'lib/assets/icons/logosMetodoPago/cmr.jpg';
+        return;
+    }
   }
 }

@@ -8,6 +8,8 @@ bool login = false;
 
 int cards = 0;
 
+String accessToken = "";
+
 class Carrito {
   final List<String> id;
   final List<String> codigo;

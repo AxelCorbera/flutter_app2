@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.3
+  mercadopago_sdk: ^1.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,6 +61,23 @@ flutter:
     - lib/assets/icons/urinary.png
     - lib/assets/icons/dog-food-pet.png
     - lib/assets/icons/support.png
+    - lib/assets/icons/avatarDocumento.png
+    - lib/assets/icons/logosMetodoPago/amex.png
+    - lib/assets/icons/logosMetodoPago/argencard.jpg
+    - lib/assets/icons/logosMetodoPago/cabal.png
+    - lib/assets/icons/logosMetodoPago/cabalDebito.jpg
+    - lib/assets/icons/logosMetodoPago/cencosud.jpg
+    - lib/assets/icons/logosMetodoPago/cmr.jpg
+    - lib/assets/icons/logosMetodoPago/cordobesa.jpg
+    - lib/assets/icons/logosMetodoPago/cordial.jpg
+    - lib/assets/icons/logosMetodoPago/diners.png
+    - lib/assets/icons/logosMetodoPago/maestro.png
+    - lib/assets/icons/logosMetodoPago/master.png
+    - lib/assets/icons/logosMetodoPago/naranja.png
+    - lib/assets/icons/logosMetodoPago/nativa.jpg
+    - lib/assets/icons/logosMetodoPago/shopping.png
+    - lib/assets/icons/logosMetodoPago/visa.png
+    - lib/assets/icons/logosMetodoPago/visadebito.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
