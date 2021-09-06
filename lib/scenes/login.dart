@@ -182,6 +182,7 @@ class _LoginState extends State<Login> {
 
         if (token.id != '' && token.id != '-1') {
           Usuario usuario = await request.DatosUsuario(token.id, token.token);
+          globals.usuario!.id = usuario.id;
           globals.usuario!.correo = usuario.correo;
           globals.usuario!.nombre = usuario.nombre;
           globals.usuario!.apellido = usuario.apellido;

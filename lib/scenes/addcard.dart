@@ -537,6 +537,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
                     _agregarTarjeta();
                   }else{
                     _crearCustomer();
+                    _agregarTarjeta();
                   }
                 },
                 color: Theme.of(context).primaryColor,

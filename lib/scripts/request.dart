@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'mercadopago/customerJson.dart';
+import 'mercadopago/json/baseDatos.dart';
 
 class Album {
   final String id;
@@ -51,16 +52,16 @@ class Credenciales {
   String? numero;
 
   Credenciales(
-      this.id,
-      this.fecha,
-      this.usuario,
-      this.codigoAutorizacion,
-      this.accessToken,
-      this.publicKey,
-      this.refreshToken,
-      this.userId,
-      this.numero,
-);
+    this.id,
+    this.fecha,
+    this.usuario,
+    this.codigoAutorizacion,
+    this.accessToken,
+    this.publicKey,
+    this.refreshToken,
+    this.userId,
+    this.numero,
+  );
 
   factory Credenciales.fromJson(Map<String, dynamic> json) {
     var idJson = json['id'];
@@ -74,16 +75,16 @@ class Credenciales {
     var numeroJson = json['numero'];
 
     return new Credenciales(
-        idJson,
-        fechaJson,
-        usuarioJson,
-        codigoAutorizacionJson,
-        accessTokenJson,
-        publicKeyJson,
-        refreshTokenJson,
-        userIdJson,
-        numeroJson,
-        );
+      idJson,
+      fechaJson,
+      usuarioJson,
+      codigoAutorizacionJson,
+      accessTokenJson,
+      publicKeyJson,
+      refreshTokenJson,
+      userIdJson,
+      numeroJson,
+    );
   }
 }
 
@@ -375,6 +376,30 @@ Future<Marcas> Buscaritems(
   }
 }
 
+Future<Compras> BuscarCompras(
+    String idUsuario) async {
+  Map map = new Map<String, dynamic>();
+    map['idusuario'] = idUsuario;
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/consultaCompras.php?idusuario=$idUsuario'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+  );
+  print('http://wh534614.ispot.cc/mypetshop/flutter/consultaCompras.php?idusuario=$idUsuario');
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('respuesta ' + jsonDecode(response.body).toString());
+    return Compras.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la busqueda de compras.');
+  }
+}
+
 Future<List<Cards>> BuscarTarjetas(String idCustomer) async {
   //    SI NO HAY TARJETAS, TIRA ERROR !
 
@@ -434,7 +459,8 @@ Future<Cards> EliminarTarjeta(String idCustomer, String idTarjeta) async {
   String accessToken = globals.accessToken;
 
   final response = await http.delete(
-    Uri.parse('https://api.mercadopago.com/v1/customers/$idCustomer/cards/$idTarjeta'),
+    Uri.parse(
+        'https://api.mercadopago.com/v1/customers/$idCustomer/cards/$idTarjeta'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Authorization': 'Bearer $accessToken'
@@ -474,9 +500,10 @@ Future<CreateCustomer> CrearCustomer(Datos customerDatos) async {
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
     CreateCustomer c = CreateCustomer.fromJson(jsonDecode(response.body));
-    String resp = await _actualizarCustomerDB(c.id.toString(), c.email.toString());
+    String resp =
+        await _actualizarCustomerDB(c.id.toString(), c.email.toString());
     print("actualizando customer en base de datos: " + resp);
-    if(resp == "1"){
+    if (resp == "1") {
       globals.usuario!.idcustomer = c.id;
     }
     return c;
@@ -487,14 +514,14 @@ Future<CreateCustomer> CrearCustomer(Datos customerDatos) async {
   }
 }
 
-Future<String> _actualizarCustomerDB(String customer, String correo) async{
-
-  Map datos = new Map<String,String>();
+Future<String> _actualizarCustomerDB(String customer, String correo) async {
+  Map datos = new Map<String, String>();
   datos["customer"] = customer;
   datos["email"] = correo;
 
   final response = await http.post(
-    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/guardarCustomer.php?'),
+    Uri.parse(
+        'http://wh534614.ispot.cc/mypetshop/flutter/guardarCustomer.php?'),
     body: datos,
   );
   print("datos a actualizar: " + datos.toString());
@@ -502,15 +529,14 @@ Future<String> _actualizarCustomerDB(String customer, String correo) async{
 }
 
 Future<cuotas.Cuotas> Cuotas(String bin, String total) async {
-
   Map map = new Map<String, dynamic>();
   map['bin'] = bin;
   map['total'] = total;
-  if(globals.accessToken == ""){
+  if (globals.accessToken == "") {
     Credenciales cred = await Claves('MoritasPet');
     globals.accessToken = cred.accessToken.toString();
     map['access_token'] = cred.accessToken.toString();
-  }else {
+  } else {
     map['access_token'] = globals.accessToken;
   }
 
@@ -536,7 +562,6 @@ Future<cuotas.Cuotas> Cuotas(String bin, String total) async {
 }
 
 Future<Credenciales> Claves(String usuario) async {
-
   Map map = new Map<String, dynamic>();
   map['usuario'] = usuario;
 
@@ -562,5 +587,3 @@ Future<Credenciales> Claves(String usuario) async {
     throw Exception('Failed to create album.');
   }
 }
-
-

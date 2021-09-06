@@ -200,7 +200,9 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                globals.login ? null : _unlogin(context);
+                globals.login ?
+                Navigator.pushNamed(context, '/Purchases')
+                    : _unlogin(context);
               },
             ),
             ListTile(
