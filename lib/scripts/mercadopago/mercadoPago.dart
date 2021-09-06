@@ -1,39 +1,104 @@
 import 'dart:convert';
 
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:flutter_app2/scripts/request.dart' as request;
+import 'package:flutter_app2/scripts/mercadopago/json/saveCardJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/cardsJson.dart' as cards;
 import 'package:mercadopago_sdk/mercadopago_sdk.dart';
-import 'package:flutter_app2/scripts/mercadopago/cardTokenJson.dart' as Mp;
 
-Future<String> CardToken() async {
-  String publicKey = "APP_USR-741bbd2f-ab0c-436b-aad5-40e7fbe47ca1";
+class DatosTarjeta {
+  DatosTarjeta(
+      {this.numeros,
+      this.nombre,
+      this.mes,
+      this.ano,
+      this.docTipo,
+      this.docNum,
+      this.cvv});
+  String? numeros;
+  String? nombre;
+  String? mes;
+  String? ano;
+  String? docTipo;
+  String? docNum;
+  String? cvv;
+}
+
+Future<String> CardToken(DatosTarjeta datos) async {
+  while (globals.publicKey == "") {
+    await request.Claves("MoritasPet");
+  }
+  String publicKey = globals.publicKey;
   var mp = MP.fromAccessToken(globals.accessToken);
 
   Map identification = new Map<String, dynamic>();
-  identification["type"] = "DNI";
-  identification["number"] = "12345678";
+  identification["type"] = datos.docTipo;
+  identification["number"] = datos.docNum;
   Map cardholder = new Map<String, dynamic>();
-  cardholder["name"] = "APRO";
+  cardholder["name"] = datos.nombre;
   cardholder["identification"] = identification;
   Map jsonData = new Map<String, dynamic>();
-  jsonData["card_number"] = "4509953566233704";
-  jsonData["security_code"] = "123";
-  jsonData["expiration_month"] = "11";
-  jsonData["expiration_year"] = "2025";
+  jsonData["card_number"] = datos.numeros;
+  jsonData["security_code"] = datos.cvv;
+  jsonData["expiration_month"] = datos.mes;
+  jsonData["expiration_year"] = "20" + datos.ano.toString();
   jsonData["cardholder"] = cardholder;
-  Map key = new Map<String,String>();
+  Map key = new Map<String, String>();
   key["public_key"] = publicKey;
 
-
-  final result = await mp.post("/v1/card_tokens/",data: jsonData as Map<String,dynamic>,params: key as Map<String,String>);
-  try{
-    print(result);
-    return result.toString();
-  }
-  catch(Exception){
+  final result = await mp.post("/v1/card_tokens/",
+      data: jsonData as Map<String, dynamic>,
+      params: key as Map<String, String>);
+  try {
+    return result["response"]["id"];
+  } catch (Exception) {
     print(Exception);
-    Mp.CardTokenJson r = new Mp.CardTokenJson();
-    r.status = 0;
-    print(r.status);
-    return r.status.toString();
+    return "0";
+  }
+}
+
+Future<String> GuardarTarjeta(String cardToken) async {
+  while (globals.accessToken == "") {
+    await request.Claves("MoritasPet");
+  }
+  var mp = MP.fromAccessToken(globals.accessToken);
+
+  Map customer_id = new Map<String, String>();
+  customer_id["customer_id"] = globals.usuario!.idcustomer;
+  Map token = new Map<String, String>();
+  token["token"] = cardToken;
+
+  final result = await mp.post("/v1/customers/",
+      data: token as Map<String, dynamic>,
+      params: customer_id as Map<String, String>);
+  try {
+    print(globals.accessToken);
+    print(result);
+    return result["response"]["id"];
+  } catch (Exception) {
+    print(Exception);
+    return "0";
+  }
+}
+
+Future<List<cards.Cards>> BuscarTarjetas(String customerId) async {
+  while (globals.accessToken == "") {
+    await request.Claves("MoritasPet");
+  }
+  var mp = MP.fromAccessToken(globals.accessToken);
+
+  Map customer_id = new Map<String, String>();
+  customer_id["customer_id"] = customerId;
+
+  final result = await mp.get("/v1/customers/",
+      params: customer_id as Map<String, String>);
+  try {
+    print(globals.accessToken);
+    print(result);
+    return cards
+        .cardsFromJson(jsonDecode(result["response"]) as Map<String, dynamic>);
+  } catch (Exception) {
+    print(Exception);
+    return <cards.Cards>[];
   }
 }

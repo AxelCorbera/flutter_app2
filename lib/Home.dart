@@ -43,6 +43,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if(globals.login){_buscarTarjetas();}
     this.carrito = globals.carrito.id.length;
     return Scaffold(
       appBar: AppBar(
@@ -245,17 +246,18 @@ class _HomeState extends State<Home> {
                 Navigator.of(context).pushNamed('/');
               },
             ),
-            ListTile(
-              title: Text('TOKEN'),
-              leading: Icon(
-                Icons.vpn_key,
-                color: Theme.of(context).primaryColor,
-              ),
-              onTap: () {
-                //Navigator.pop(context);
-                mp.CardToken();
-              },
-            ),
+            // ListTile(
+            //   title: Text('TOKEN'),
+            //   leading: Icon(
+            //     Icons.vpn_key,
+            //     color: Theme.of(context).primaryColor,
+            //   ),
+            //   onTap: () async {
+            //     //Navigator.pop(context);
+            //     //String s = await mp.CardToken();
+            //     //mp.GuardarTarjeta(s);
+            //   },
+            // ),
           ],
         ),
       ),
@@ -324,10 +326,14 @@ class _HomeState extends State<Home> {
   }
 
   void _buscarTarjetas() async {
-    List<Cards> tarjetas =
-        await request.BuscarTarjetas("760123073-zhFNkEPBmU7Eo2");
-    if (tarjetas[0].error != null) {
-      print('error: ' + tarjetas[0].error.toString());
+    if(globals.usuario!.idcustomer !="") {
+      List<Cards> tarjetas =
+      await request.BuscarTarjetas(globals.usuario!.idcustomer
+          .toString()); //globals.usuario!.idcustomer.toString() //819221039-mHUSlOwg4ApZGE
+      globals.cards = List.from(tarjetas);
+      if (tarjetas.length>0 && tarjetas[0].error != null) {
+        print('error: ' + tarjetas[0].error.toString());
+      }
     }
   }
 

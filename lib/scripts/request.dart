@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_app2/scripts/album.dart';
+import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
+import 'package:flutter_app2/scripts/mercadopago/json/crearCustomerJson.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:flutter_app2/scripts/request.dart' as request;
 import 'mercadopago/customerJson.dart';
 
 class Album {
@@ -43,6 +45,7 @@ class Credenciales {
   String? usuario;
   String? codigoAutorizacion;
   String? accessToken;
+  String? publicKey;
   String? refreshToken;
   String? userId;
   String? numero;
@@ -53,6 +56,7 @@ class Credenciales {
       this.usuario,
       this.codigoAutorizacion,
       this.accessToken,
+      this.publicKey,
       this.refreshToken,
       this.userId,
       this.numero,
@@ -64,6 +68,7 @@ class Credenciales {
     var usuarioJson = json['usuario'];
     var codigoAutorizacionJson = json['codigoAutorizacion'];
     var accessTokenJson = json['accessToken'];
+    var publicKeyJson = json['publicKey'];
     var refreshTokenJson = json['refreshToken'];
     var userIdJson = json['userId'];
     var numeroJson = json['numero'];
@@ -74,6 +79,7 @@ class Credenciales {
         usuarioJson,
         codigoAutorizacionJson,
         accessTokenJson,
+        publicKeyJson,
         refreshTokenJson,
         userIdJson,
         numeroJson,
@@ -242,7 +248,7 @@ Future<Album> IniciarSesion(String email, String clave) async {
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print(jsonDecode(response.body));
@@ -266,7 +272,7 @@ Future<Usuario> DatosUsuario(String id, String token) async {
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print(jsonDecode(response.body));
@@ -294,7 +300,7 @@ Future<String> Registrarse(
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print(jsonDecode(response.body));
@@ -324,7 +330,7 @@ Future<List<String>> BuscarCategoria(String categoria) async {
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
@@ -357,7 +363,7 @@ Future<Marcas> Buscaritems(
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
@@ -372,19 +378,23 @@ Future<Marcas> Buscaritems(
 Future<List<Cards>> BuscarTarjetas(String idCustomer) async {
   //    SI NO HAY TARJETAS, TIRA ERROR !
 
-  Map map = new Map<String, dynamic>();
-  map['customer'] = idCustomer;
-  map['comercio'] = 'MoritasPet';
+  // Map map = new Map<String, dynamic>();
+  // map['customer'] = idCustomer;
+  // map['comercio'] = 'MoritasPet';
+  while (globals.accessToken == "") {
+    await request.Claves("MoritasPet");
+  }
+  String accessToken = globals.accessToken;
 
-  final response = await http.post(
-    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/buscarTarjetas.php?'),
+  final response = await http.get(
+    Uri.parse('https://api.mercadopago.com/v1/customers/$idCustomer/cards'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
     },
-    body: map,
   );
-  print(response.statusCode);
-  if (response.statusCode == 200) {
+  print(response.body.toString());
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
@@ -392,7 +402,7 @@ Future<List<Cards>> BuscarTarjetas(String idCustomer) async {
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw Exception('Failed to create album.');
+    throw Exception('Fallo la busqueda de tarjetas.');
   }
 }
 
@@ -405,7 +415,7 @@ Future<FindCustomer> BuscarCustomer(String email) async {
     },
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
@@ -415,6 +425,80 @@ Future<FindCustomer> BuscarCustomer(String email) async {
     // then throw an exception.
     throw Exception('Failed to create album.');
   }
+}
+
+Future<Cards> EliminarTarjeta(String idCustomer, String idTarjeta) async {
+  while (globals.accessToken == "") {
+    await request.Claves("MoritasPet");
+  }
+  String accessToken = globals.accessToken;
+
+  final response = await http.delete(
+    Uri.parse('https://api.mercadopago.com/v1/customers/$idCustomer/cards/$idTarjeta'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    },
+  );
+  print(response.body.toString());
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('respuesta ' + jsonDecode(response.body).toString());
+    return Cards.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo el Delete.');
+  }
+}
+
+Future<CreateCustomer> CrearCustomer(Datos customerDatos) async {
+  while (globals.accessToken == "") {
+    await request.Claves("MoritasPet");
+  }
+  String accessToken = globals.accessToken;
+
+  final response = await http.post(
+    Uri.parse('https://api.mercadopago.com/v1/customers/'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    },
+    body: jsonEncode(customerDatos),
+  );
+  print(">> " + response.body.toString());
+  print(response.statusCode);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('respuesta ' + jsonDecode(response.body).toString());
+    CreateCustomer c = CreateCustomer.fromJson(jsonDecode(response.body));
+    String resp = await _actualizarCustomerDB(c.id.toString(), c.email.toString());
+    print("actualizando customer en base de datos: " + resp);
+    if(resp == "1"){
+      globals.usuario!.idcustomer = c.id;
+    }
+    return c;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la creacion de customer.');
+  }
+}
+
+Future<String> _actualizarCustomerDB(String customer, String correo) async{
+
+  Map datos = new Map<String,String>();
+  datos["customer"] = customer;
+  datos["email"] = correo;
+
+  final response = await http.post(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/guardarCustomer.php?'),
+    body: datos,
+  );
+  print("datos a actualizar: " + datos.toString());
+  return response.body.toString();
 }
 
 Future<cuotas.Cuotas> Cuotas(String bin, String total) async {
@@ -438,7 +522,7 @@ Future<cuotas.Cuotas> Cuotas(String bin, String total) async {
     body: map,
   );
   print(response.statusCode);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('map ' + map.values.toString());
@@ -468,7 +552,10 @@ Future<Credenciales> Claves(String usuario) async {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('credenciales ' + jsonDecode(response.body).toString());
-    return Credenciales.fromJson(jsonDecode(response.body));
+    Credenciales cred = Credenciales.fromJson(jsonDecode(response.body));
+    globals.accessToken = cred.accessToken!;
+    globals.publicKey = cred.publicKey!;
+    return cred;
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.

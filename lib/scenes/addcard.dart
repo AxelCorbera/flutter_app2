@@ -1,7 +1,10 @@
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/crearCustomerJson.dart' as c;
 import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/mercadoPago.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
+import 'package:flutter_app2/Home.dart' as home;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
@@ -18,6 +21,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
   final _textFieldControllerSecCode = TextEditingController();
   final _textFieldControllerDocument = TextEditingController();
   GlobalKey<FormState> _keyForm = GlobalKey();
+  GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
   String numero = "**** **** **** ****";
   String documento = "** *** ***";
   String cvv = "***";
@@ -51,6 +55,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _keyScaf,
       appBar: AppBar(
         title: Text('Agregar tarjeta - Paso ' + (fase+1).toString() + '/3'),
         backgroundColor: Theme.of(context).primaryColor,
@@ -528,9 +533,11 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
               ),
               RaisedButton(
                 onPressed: () {
-                  //
-                  // AGREGAR TARJETA
-                  //
+                  if(globals.usuario!.idcustomer != "") {
+                    _agregarTarjeta();
+                  }else{
+                    _crearCustomer();
+                  }
                 },
                 color: Theme.of(context).primaryColor,
                 child: Text(
@@ -605,6 +612,63 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void _agregarTarjeta() async{
+    DatosTarjeta datos = new DatosTarjeta();
+    datos.numeros = _textFieldControllerNumber.value.text.replaceAll(" ", "");
+    datos.nombre = _textFieldControllerName.value.text.toUpperCase();
+    datos.mes = _textFieldControllerExpire.value.text.toString().substring(0,2);
+    datos.ano = _textFieldControllerExpire.value.text.toString().substring(3,5);
+    datos.docTipo = "DNI";
+    datos.docNum = _textFieldControllerDocument.value.text.replaceAll(".", "");
+    datos.cvv = _textFieldControllerSecCode.value.text;
+
+    String token = await CardToken(datos);
+    final respuesta = await GuardarTarjeta(token);
+    print("respuesta a guardar tarjeta > " + respuesta.toString());
+
+    if(respuesta.toString()!="0"){
+      _mostrarMensaje("La tarjeta se guardo correctamente!");
+      Navigator.pop(context);
+    }else{
+      _mostrarMensaje("Ocurrio un error. Vuelva a intentar.");
+    }
+  }
+
+  void _crearCustomer() async{
+
+    if(globals.usuario!.correo == "") {
+     print(globals.usuario!.correo! + globals.usuario!.nombre! + globals.usuario!.apellido!);
+      return;
+    }
+    c.Datos customer = new c.Datos();
+    customer.email = globals.usuario!.correo;
+    customer.firstName = globals.usuario!.nombre;
+    customer.lastName = globals.usuario!.apellido;
+    customer.phone = new c.Phone();
+    customer.identification = new c.Identification();
+    customer.address = new c.Address();
+
+    //String? email;
+    //   String? firstName;
+    //   String? lastName;
+    //   Phone? phone;
+    //   Identification? identification;
+    //   String? defaultAddress;
+    //   Address? address;
+    //   String? dateRegistered;
+    //   String? description;
+    //   String? defaultCard;
+
+    request.CrearCustomer(customer);
+  }
+
+  void _mostrarMensaje(String msg) {
+    SnackBar snackBar = SnackBar(
+      content: Text(msg),
+    );
+    _keyScaf.currentState!.showSnackBar(snackBar);
   }
 
   void _MetodoPago(String id){

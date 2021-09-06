@@ -182,7 +182,21 @@ class _LoginState extends State<Login> {
 
         if (token.id != '' && token.id != '-1') {
           Usuario usuario = await request.DatosUsuario(token.id, token.token);
+          globals.usuario!.correo = usuario.correo;
           globals.usuario!.nombre = usuario.nombre;
+          globals.usuario!.apellido = usuario.apellido;
+          globals.usuario!.tipo = usuario.tipo;
+          globals.usuario!.cuil = usuario.cuil;
+          globals.usuario!.razonsocial = usuario.razonsocial;
+          globals.usuario!.compras = usuario.compras;
+          globals.usuario!.idcompras = usuario.idcompras;
+          globals.usuario!.idcustomer = usuario.idcustomer;
+          globals.usuario!.idtarjetas = usuario.idtarjetas;
+          globals.usuario!.jsonDatos = usuario.jsonDatos;
+          globals.usuario!.token = usuario.token;
+          globals.usuario!.mascotas = usuario.mascotas;
+          globals.usuario!.historial = usuario.historial;
+          globals.usuario!.foto = usuario.foto;
         }
 
         setState(() {

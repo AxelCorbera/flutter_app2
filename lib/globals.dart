@@ -1,14 +1,17 @@
 library flutter_app2.globals;
 
+import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/request.dart';
 
 Usuario? usuario = Usuario("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 
 bool login = false;
 
-int cards = 0;
+List<Cards> cards = <Cards>[];
 
 String accessToken = "";
+
+String publicKey = "";
 
 class Carrito {
   final List<String> id;

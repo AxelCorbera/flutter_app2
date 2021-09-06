@@ -67,7 +67,7 @@ class CreateCustomer {
     "identification": identification!.toJson(),
     "address": address!.toJson(),
     "description": description,
-    "date_created": dateCreated!.toIso8601String(),
+    "date_created": dateCreated.toString(),
     "metadata": metadata!.toJson(),
     "default_address": defaultAddress,
     "cards": List<dynamic>.from(cards!.map((x) => x.toJson())),
