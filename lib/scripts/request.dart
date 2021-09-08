@@ -4,6 +4,7 @@ import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
 import 'package:flutter_app2/scripts/mercadopago/json/crearCustomerJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart' as request;
@@ -397,6 +398,28 @@ Future<db.Compras> BuscarCompras(
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
     throw Exception('Fallo la busqueda de compras.');
+  }
+}
+
+Future<Mascotas> BuscarMascotas(
+    String idUsuario) async {
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/consultarMascotas.php?id=$idUsuario'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+  );
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    print('respuesta ' + jsonDecode(response.body).toString());
+    return Mascotas.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la busqueda de Mascotas.');
   }
 }
 

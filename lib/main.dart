@@ -3,6 +3,7 @@ import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
 import 'package:flutter_app2/scenes/items.dart';
+import 'package:flutter_app2/scenes/pets.dart';
 import 'package:flutter_app2/scenes/purcharses.dart';
 import 'package:flutter_app2/scenes/purchasedetails.dart';
 import 'package:flutter_app2/scenes/shop.dart';
@@ -65,6 +66,8 @@ class MyApp extends StatelessWidget {
               return Category(categoria: args.icono);
             case "/Register":
               return Register();
+            case "/Pets":
+              return Pets();
             case "/Support":
               return Support();
             case "/Cards":

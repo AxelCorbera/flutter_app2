@@ -10,7 +10,7 @@ class Compras {
   List<String>? productos;
   List<String>? total;
   List<String>? pago;
-  List<String>? estado;
+  List<String> estado;
   List<String>? productosCodigo;
   List<String>? tarjeta;
   List<String>? idPago;
@@ -32,7 +32,7 @@ class Compras {
     this.productos,
     this.total,
     this.pago,
-    this.estado,
+    required this.estado,
     this.productosCodigo,
     this.tarjeta,
     this.idPago,

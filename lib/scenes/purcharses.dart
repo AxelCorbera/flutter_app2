@@ -12,6 +12,9 @@ class Purchases extends StatefulWidget {
 }
 
 class _PurchasesState extends State<Purchases> {
+  bool filtroTodos = true;
+  bool filtroApro = false;
+  bool filtroRecha = false;
   String menu = 'home';
   bool busqueda = true;
   Compras compras = new Compras(
@@ -39,49 +42,109 @@ class _PurchasesState extends State<Purchases> {
     // if (!request) {
     //   _buscaritems(widget.categoria, widget.marca, widget.busqueda as String);
     // }
-    _buscarCompras();
+    filtroTodos
+        ? _buscarCompras("")
+        : filtroApro
+            ? _buscarCompras("aprobado")
+            : _buscarCompras("rechazado");
     print("KKKKK " + busqueda.toString());
     carrito = globals.carrito.id.length;
     return Scaffold(
       appBar: appbar("Ultimas compras"),
       body: !busqueda
           ? Stack(children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FlatButton(
-                    onPressed: () {},
-                    child: Text("Todos",
+              Container(
+                //color: Colors.red,
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.all(5),
+                width: double.infinity,
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        if(filtroTodos == false) {
+                          busqueda = true;
+                          filtroTodos = true;
+                          filtroApro = false;
+                          filtroRecha = false;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          // optional
+                          padding: const EdgeInsets.all(5),
+                          decoration: filtroTodos
+                              ? BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 2.0,
+                                          color:
+                                              Theme.of(context).primaryColor)))
+                              : null,
+                          child: Text('Todos')),
+                    ),
+                    Text("|",
                         style: TextStyle(
                           color: Colors.grey,
                         )),
-                  ),
-                  Text("|",
-                      style: TextStyle(
-                        color: Colors.grey,
-                      )),
-                  FlatButton(
-                    onPressed: () {},
-                    child: Text("Aprobados",
+                    GestureDetector(
+                      onTap: () {
+                        if(filtroApro == false) {
+                          busqueda = true;
+                          filtroTodos = false;
+                          filtroApro = true;
+                          filtroRecha = false;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          // optional
+                          padding: const EdgeInsets.all(5),
+                          decoration: filtroApro
+                              ? BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 2.0,
+                                          color:
+                                              Theme.of(context).primaryColor)))
+                              : null,
+                          child: Text('Aprobados')),
+                    ),
+                    Text("|",
                         style: TextStyle(
                           color: Colors.grey,
                         )),
-                  ),
-                  Text("|",
-                      style: TextStyle(
-                        color: Colors.grey,
-                      )),
-                  FlatButton(
-                    onPressed: () {},
-                    child: Text("Rechazados",
-                        style: TextStyle(
-                          color: Colors.grey,
-                        )),
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        if(filtroRecha == false) {
+                          busqueda = true;
+                          filtroTodos = false;
+                          filtroApro = false;
+                          filtroRecha = true;
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                          // optional
+                          padding: const EdgeInsets.all(5),
+                          decoration: filtroRecha
+                              ? BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 2.0,
+                                          color:
+                                              Theme.of(context).primaryColor)))
+                              : null,
+                          child: Text('Rechazados')),
+                    ),
+                  ],
+                ),
               ),
               Transform(
-                transform: Matrix4.translationValues(0, 50, 0),
+                transform: Matrix4.translationValues(0, 60, 0),
                 child: Container(
                   child: ListView.builder(
                       itemCount: compras.id!.length,
@@ -97,7 +160,7 @@ class _PurchasesState extends State<Purchases> {
                                         productos: compras.productos![index],
                                         total: compras.total![index],
                                         pago: compras.pago![index],
-                                        estado: compras.estado![index],
+                                        estado: compras.estado[index],
                                         tarjeta: compras.tarjeta![index],
                                         idPago: compras.idPago![index],
                                         documento: compras.documento![index],
@@ -114,9 +177,9 @@ class _PurchasesState extends State<Purchases> {
                             child: Column(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.all(3),
+                                  margin: EdgeInsets.all(0),
                                   child: Card(
-                                    margin: EdgeInsets.all(2),
+                                    margin: EdgeInsets.all(0),
                                     color: Colors.white60,
                                     semanticContainer: true,
                                     child: Container(
@@ -131,60 +194,86 @@ class _PurchasesState extends State<Purchases> {
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
-                                                        .spaceEvenly,
+                                                        .spaceAround,
                                                 children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      compras.estado![index] ==
-                                                                  "approved" ||
-                                                              compras.estado![
-                                                                      index] ==
-                                                                  "pagado"
-                                                          ? Icon(
-                                                              ArrowsIcons
-                                                                  .arrow_up_right2,
-                                                              color:
-                                                                  Colors.green,
-                                                              size: 20,
-                                                            )
-                                                          : Icon(
-                                                              ArrowsIcons
-                                                                  .arrow_down_left2,
-                                                              color: Colors.red,
-                                                              size: 20),
-                                                    ],
+                                                  Container(
+                                                    width: 0,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        compras.estado[index] ==
+                                                                    "approved" ||
+                                                                compras.estado[
+                                                                        index] ==
+                                                                    "pagado"
+                                                            ? Icon(
+                                                                ArrowsIcons
+                                                                    .arrow_up_right2,
+                                                                color: Colors
+                                                                    .green[700],
+                                                                size: 15,
+                                                              )
+                                                            : Icon(
+                                                                ArrowsIcons
+                                                                    .arrow_down_left2,
+                                                                color: Colors
+                                                                    .red[700],
+                                                                size: 15),
+                                                      ],
+                                                    ),
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        "Compra " +
-                                                            compras.id![index],
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 4,
-                                                      ),
-                                                      Text(
-                                                        compras.estado![index],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
+                                                  Container(
+                                                    width: 150,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Compra " +
+                                                              compras
+                                                                  .id![index],
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 4,
+                                                        ),compras.estado[index]=="approved"?
+                                                        Text(
+                                                          "Aprobado",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ):compras.estado[index]=="rejected"?
+                                                  Text(
+                                                    "Rechazado",
+                                                    style: TextStyle(
+                                                        color:
+                                                        Colors.grey,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold)):Text("Error: "+ compras.estado[index],
+                                                    style: TextStyle(
+                                                        color:
+                                                        Colors.grey,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold)),
+                                                      ],
+                                                    ),
                                                   ),
                                                   Column(
                                                     crossAxisAlignment:
@@ -289,10 +378,76 @@ class _PurchasesState extends State<Purchases> {
         ]);
   }
 
-  void _buscarCompras() async {
+  void _buscarCompras(String filtro) async {
     if (busqueda) {
       print("usuario>> " + globals.usuario!.id.toString());
       compras = await BuscarCompras(globals.usuario!.id.toString());
+      if (filtro != "") {
+        Compras filtroCompra = new Compras(
+            id: [],
+            fecha: [],
+            cliente: [],
+            productos: [],
+            total: [],
+            estado: [],
+            tarjeta: [],
+            pago: [],
+            idPago: [],
+            documento: [],
+            token: [],
+            cuotas: [],
+            montoCuota: [],
+            totalCuota: [],
+            detalle: [],
+            telefono: []);
+
+        if (filtro == "aprobado") {
+          for (var i in compras.estado) {
+            if (i == "approved" || i == "pagado") {
+              int a = compras.estado.indexOf(i);
+              filtroCompra.id!.add(compras.id![a]);
+              filtroCompra.fecha!.add(compras.fecha![a]);
+              filtroCompra.cliente!.add(compras.cliente![a]);
+              filtroCompra.productos!.add(compras.productos![a]);
+              filtroCompra.total!.add(compras.total![a]);
+              filtroCompra.estado.add(compras.estado[a]);
+              filtroCompra.tarjeta!.add(compras.tarjeta![a]);
+              filtroCompra.pago!.add(compras.pago![a]);
+              filtroCompra.documento!.add(compras.documento![a]);
+              filtroCompra.token!.add(compras.token![a]);
+              filtroCompra.cuotas!.add(compras.cuotas![a]);
+              filtroCompra.montoCuota!.add(compras.montoCuota![a]);
+              filtroCompra.totalCuota!.add(compras.totalCuota![a]);
+              filtroCompra.idPago!.add(compras.idPago![a]);
+              filtroCompra.detalle!.add(compras.detalle![a]);
+              filtroCompra.telefono!.add(compras.telefono![a]);
+            }
+          }
+        } else {
+          for (var i in compras.estado) {
+            if (i != "approved" && i != "pagado") {
+              int a = compras.estado.indexOf(i);
+              filtroCompra.id!.add(compras.id![a]);
+              filtroCompra.fecha!.add(compras.fecha![a]);
+              filtroCompra.cliente!.add(compras.cliente![a]);
+              filtroCompra.productos!.add(compras.productos![a]);
+              filtroCompra.total!.add(compras.total![a]);
+              filtroCompra.estado.add(compras.estado[a]);
+              filtroCompra.tarjeta!.add(compras.tarjeta![a]);
+              filtroCompra.pago!.add(compras.pago![a]);
+              filtroCompra.documento!.add(compras.documento![a]);
+              filtroCompra.token!.add(compras.token![a]);
+              filtroCompra.cuotas!.add(compras.cuotas![a]);
+              filtroCompra.montoCuota!.add(compras.montoCuota![a]);
+              filtroCompra.totalCuota!.add(compras.totalCuota![a]);
+              filtroCompra.idPago!.add(compras.idPago![a]);
+              filtroCompra.detalle!.add(compras.detalle![a]);
+              filtroCompra.telefono!.add(compras.telefono![a]);
+            }
+          }
+        }
+        compras = filtroCompra;
+      }
       busqueda = false;
       setState(() {});
     }

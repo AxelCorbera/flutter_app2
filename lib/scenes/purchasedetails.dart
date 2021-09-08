@@ -74,11 +74,11 @@ class _purchaseDetailsState extends State<PurchaseDetails>
               children: [
                 Text(
                   "Operacion #" + compra.id,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 13),
                 ),
                 Text(
                   "· Creadada el " + compra.fecha,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 13),
                 ),
               ],
             ),

@@ -43,7 +43,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if(globals.login){_buscarTarjetas();}
+    if (globals.login) {
+      _buscarTarjetas();
+    }
     this.carrito = globals.carrito.id.length;
     return Scaffold(
       appBar: AppBar(
@@ -190,7 +192,9 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                globals.login ? null : _unlogin(context);
+                globals.login
+                    ? Navigator.pushNamed(context, '/Pets')
+                    : _unlogin(context);
               },
             ),
             ListTile(
@@ -200,8 +204,8 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).primaryColor,
               ),
               onTap: () {
-                globals.login ?
-                Navigator.pushNamed(context, '/Purchases')
+                globals.login
+                    ? Navigator.pushNamed(context, '/Purchases')
                     : _unlogin(context);
               },
             ),
@@ -328,12 +332,12 @@ class _HomeState extends State<Home> {
   }
 
   void _buscarTarjetas() async {
-    if(globals.usuario!.idcustomer !="") {
-      List<Cards> tarjetas =
-      await request.BuscarTarjetas(globals.usuario!.idcustomer
+    if (globals.usuario!.idcustomer != "") {
+      List<Cards> tarjetas = await request.BuscarTarjetas(globals
+          .usuario!.idcustomer
           .toString()); //globals.usuario!.idcustomer.toString() //819221039-mHUSlOwg4ApZGE
       globals.cards = List.from(tarjetas);
-      if (tarjetas.length>0 && tarjetas[0].error != null) {
+      if (tarjetas.length > 0 && tarjetas[0].error != null) {
         print('error: ' + tarjetas[0].error.toString());
       }
     }
