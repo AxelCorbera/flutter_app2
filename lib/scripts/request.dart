@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'mercadopago/customerJson.dart';
-import 'mercadopago/json/baseDatos.dart';
+import 'mercadopago/json/baseDatos.dart' as db;
 
 class Album {
   final String id;
@@ -376,7 +376,7 @@ Future<Marcas> Buscaritems(
   }
 }
 
-Future<Compras> BuscarCompras(
+Future<db.Compras> BuscarCompras(
     String idUsuario) async {
   Map map = new Map<String, dynamic>();
     map['idusuario'] = idUsuario;
@@ -392,7 +392,7 @@ Future<Compras> BuscarCompras(
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
     print('respuesta ' + jsonDecode(response.body).toString());
-    return Compras.fromJson(jsonDecode(response.body));
+    return db.Compras.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.

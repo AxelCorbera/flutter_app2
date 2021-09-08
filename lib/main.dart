@@ -4,6 +4,7 @@ import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
 import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scenes/purcharses.dart';
+import 'package:flutter_app2/scenes/purchasedetails.dart';
 import 'package:flutter_app2/scenes/shop.dart';
 import 'package:flutter_app2/scenes/item.dart';
 import 'package:flutter_app2/scenes/login.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_app2/scenes/cart.dart';
 import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/support.dart';
 import 'package:flutter_app2/scenes/cards.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/baseDatos.dart' as db;
 import 'package:flutter_app2/scripts/request.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 
@@ -46,6 +48,9 @@ class MyApp extends StatelessWidget {
               return Cart();
             case "/Purchases":
               return Purchases();
+            case "/PurchaseDetails":
+              final args = settings.arguments as db.Compra;
+              return PurchaseDetails(compra: args);
             case "/Item":
               final args = settings.arguments as Marca;
               return Item(item: args);
