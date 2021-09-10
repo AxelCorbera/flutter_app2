@@ -79,3 +79,38 @@ class Item {
     "observacion": observacion,
   };
 }
+
+class FotoMascotas {
+  FotoMascotas({
+    required this.id,
+    required this.idusuario,
+    required this.idmascota,
+    required this.nombre,
+    required this.imagen,
+
+  });
+
+  List<String>? id;
+  List<String>? idusuario;
+  List<String>? idmascota;
+  List<String>? nombre;
+  List<String>? imagen;
+
+
+  factory FotoMascotas.fromJson(Map<String, dynamic> json) => FotoMascotas(
+    id: List<String>.from(json["id"]),
+    idusuario: List<String>.from(json["idusuario"]),
+    idmascota: List<String>.from(json["idmascota"]),
+    nombre: List<String>.from(json["nombre"]),
+    imagen: List<String>.from(json["imagen"])
+
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "idusuario" : idusuario,
+    "idmascota" : idmascota,
+    "nombre" : nombre,
+    "imagen" : imagen
+  };
+}

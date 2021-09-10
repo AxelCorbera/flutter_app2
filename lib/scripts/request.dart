@@ -333,9 +333,9 @@ Future<List<String>> BuscarCategoria(String categoria) async {
   );
   print(response.statusCode);
   if (response.statusCode == 200 || response.statusCode == 201) {
-    // If the server did return a 200 CREATED response,
-    // then parse the JSON.
-    print('respuesta ' + jsonDecode(response.body).toString());
+
+    //DEVUELVE ARRAY
+
     return Categorias.fromJson(jsonDecode(response.body)).cate;
   } else {
     // If the server did not return a 201 CREATED response,
@@ -366,9 +366,9 @@ Future<Marcas> Buscaritems(
   );
   print(response.statusCode);
   if (response.statusCode == 200 || response.statusCode == 201) {
-    // If the server did return a 200 CREATED response,
-    // then parse the JSON.
-    print('respuesta ' + jsonDecode(response.body).toString());
+
+    //DEVUELVE ARRAY
+
     return Marcas.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
@@ -390,9 +390,9 @@ Future<db.Compras> BuscarCompras(
   );
   print('http://wh534614.ispot.cc/mypetshop/flutter/consultaCompras.php?idusuario=$idUsuario');
   if (response.statusCode == 200 || response.statusCode == 201) {
-    // If the server did return a 200 CREATED response,
-    // then parse the JSON.
-    print('respuesta ' + jsonDecode(response.body).toString());
+
+    //DEVUELVE ARRAY
+
     return db.Compras.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
@@ -410,16 +410,38 @@ Future<Mascotas> BuscarMascotas(
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
   );
-
+  print('http://wh534614.ispot.cc/mypetshop/flutter/consultarMascotas.php?id=$idUsuario');
   if (response.statusCode == 200 || response.statusCode == 201) {
-    // If the server did return a 200 CREATED response,
-    // then parse the JSON.
-    print('respuesta ' + jsonDecode(response.body).toString());
+
+    //DEVUELVE ARRAY
+
     return Mascotas.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
     throw Exception('Fallo la busqueda de Mascotas.');
+  }
+}
+
+Future<FotoMascotas> BuscarFotoMascotas(
+    String idUsuario) async {
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/consultarFotoMascota.php?id=$idUsuario'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+  );
+  //print('http://wh534614.ispot.cc/mypetshop/flutter/consultarMascotas.php?id=$idUsuario');
+  if (response.statusCode == 200 || response.statusCode == 201) {
+
+    //DEVUELVE ARRAY
+
+    return FotoMascotas.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la busqueda de foto de mascota.');
   }
 }
 

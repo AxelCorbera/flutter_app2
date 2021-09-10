@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:flutter_app2/globals.dart' as globals;
@@ -11,32 +12,30 @@ class Pets extends StatefulWidget {
 
 class _PetsState extends State<Pets> {
   Mascotas mascotas = new Mascotas(items: []);
+  FotoMascotas fotoMascotas = new FotoMascotas(
+      id: [], idusuario: [], idmascota: [], nombre: [], imagen: []);
   String menu = 'home';
   bool busqueda = true;
+  bool mess = false;
   List<bool> abrir = [];
+  List<MemoryImage> fotos = [];
   int carrito = globals.carrito.id.length;
+
   @override
   Widget build(BuildContext context) {
-    _consultarMascotas();
+    if (busqueda) _consultarMascotas();
     Uint8List bytes;
     // if (!request) {
     //   _buscaritems(widget.categoria, widget.marca, widget.busqueda as String);
     // }
     carrito = globals.carrito.id.length;
     return Scaffold(
-      appBar: appbar("Mis mascotas"),
-      body: !busqueda?Column(children: [
-        Container(
-          margin: EdgeInsets.all(10),
-          color: Colors.transparent,
-          child: _expansionPanel(mascotas),
-          //dividerColor: Colors.grey,
-        ),
-      ]):
-      Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+        appBar: appbar("Mis mascotas"),
+        body: !busqueda
+            ? _listadoMascotas(mascotas)
+            : Center(
+                child: CircularProgressIndicator(),
+              ));
   }
 
   AppBar appbar(String title) {
@@ -80,6 +79,105 @@ class _PetsState extends State<Pets> {
         ]);
   }
 
+  Widget _listadoMascotas(Mascotas mascotas) {
+    return Stack(children: <Widget>[
+      ListView.builder(
+        itemCount: mascotas.items.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {},
+            child: Column(children: <Widget>[
+              Row(children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: 44,
+                      minHeight: 44,
+                      maxWidth: 64,
+                      maxHeight: 64,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image:
+                            _imagen(mascotas.items[index].id.toString(), index),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          mascotas.items[index].nombre.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          mascotas.items[index].especie.toString() +
+                              " " +
+                              mascotas.items[index].raza.toString() +
+                              " " +
+                              _calcularEdad(
+                                  mascotas.items[index].nacimiento.toString()),
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ]),
+                ),
+                Container(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        FlatButton.icon(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.delete_rounded,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          label: Text(""),
+                        ),
+                      ]),
+                ),
+              ]),
+              Divider(
+                indent: 12,
+                endIndent: 12,
+                height: 10,
+                color: Colors.black,
+              )
+            ]),
+          );
+        },
+        scrollDirection: Axis.vertical,
+      ),
+      Transform(
+          transform: Matrix4.translationValues(0, -50 , 0),
+          child: Center(
+              child: FlatButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Agregar mascota +",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold),
+                  ))))
+    ]);
+  }
+
+  String _calcularEdad(String fecha) {
+    return "";
+  }
+
   Widget _expansionPanel(Mascotas mascotas) {
     return ExpansionPanelList(
       elevation: 0,
@@ -87,7 +185,6 @@ class _PetsState extends State<Pets> {
       children: _listExpansion(mascotas),
       expansionCallback: (panelIndex, isExpanded) {
         abrir[panelIndex] = !abrir[panelIndex];
-        print(abrir[panelIndex].toString() + " > " + panelIndex.toString());
         setState(() {});
       },
       //dividerColor: Colors.grey,
@@ -97,12 +194,32 @@ class _PetsState extends State<Pets> {
   List<ExpansionPanel> _listExpansion(Mascotas mascotas) {
     List<ExpansionPanel> l = <ExpansionPanel>[];
     int a = 0;
+
     for (var i in mascotas.items) {
       abrir.add(false);
       ExpansionPanel item = ExpansionPanel(
         //backgroundColor: Colors.transparent,
         headerBuilder: (context, isExpanded) {
           return ListTile(
+            leading: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 44,
+                minHeight: 44,
+                maxWidth: 64,
+                maxHeight: 64,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: fotos.length > a
+                        ? fotos[a]
+                        : _imagen(i.id.toString(), a),
+                  ),
+                ),
+              ),
+            ),
             title: Text(
               i.nombre.toString(),
               style: TextStyle(color: Colors.black),
@@ -160,9 +277,9 @@ class _PetsState extends State<Pets> {
                     color: Theme.of(context).primaryColor,
                   ),
                   label: Text(""),
-                ),FlatButton.icon(
-                  onPressed: () {
-                  },
+                ),
+                FlatButton.icon(
+                  onPressed: () {},
                   icon: Icon(
                     Icons.delete,
                     color: Colors.red,
@@ -170,7 +287,7 @@ class _PetsState extends State<Pets> {
                   label: Text(""),
                 ),
               ],
-            )
+            ),
           ],
         ),
         isExpanded: abrir[a],
@@ -178,7 +295,10 @@ class _PetsState extends State<Pets> {
       );
       a++;
       l.add(item);
+
+      print(a);
     }
+    //fotos.forEach((element) {print(element);});
 
     return l;
   }
@@ -188,8 +308,14 @@ class _PetsState extends State<Pets> {
     super.initState();
   }
 
-  MemoryImage _imagen(String imagen) {
-    var bytes = base64.decode(imagen);
+  MemoryImage _imagen(String id, int index) {
+    // mascotas.items.forEach((element) { print("a>"+element.id.toString());});
+    // fotoMascotas.idmascota!.forEach((element) { print("b>"+element.toString());});
+    // print(fotoMascotas.toString());
+    int num = fotoMascotas.idmascota!.indexOf(id);
+    var bytes = base64.decode(fotoMascotas.imagen![num]);
+    fotos.add(MemoryImage(bytes));
+    print("elementos: " + fotos.length.toString());
     return new MemoryImage(bytes);
   }
 
@@ -199,9 +325,12 @@ class _PetsState extends State<Pets> {
   }
 
   void _consultarMascotas() async {
-    if(busqueda)
-    mascotas = await BuscarMascotas(globals.usuario!.id.toString());
-    busqueda=false;
-    setState(() {});
+    if (globals.usuario!.id.toString() != "") {
+      if (busqueda)
+        fotoMascotas = await BuscarFotoMascotas(globals.usuario!.id.toString());
+      mascotas = await BuscarMascotas(globals.usuario!.id.toString());
+      busqueda = false;
+      setState(() {});
+    } else {}
   }
 }
