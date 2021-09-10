@@ -32,7 +32,24 @@ class _PetsState extends State<Pets> {
     return Scaffold(
         appBar: appbar("Mis mascotas"),
         body: !busqueda
-            ? _listadoMascotas(mascotas)
+            ? Column(children: <Widget>[
+                Flexible(
+                  child: _listadoMascotas(mascotas),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: FlatButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Agregar mascota +",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ])
             : Center(
                 child: CircularProgressIndicator(),
               ));
@@ -80,8 +97,8 @@ class _PetsState extends State<Pets> {
   }
 
   Widget _listadoMascotas(Mascotas mascotas) {
-    return Stack(children: <Widget>[
-      ListView.builder(
+    return Container(
+      child: ListView.builder(
         itemCount: mascotas.items.length,
         itemBuilder: (context, index) {
           return InkWell(
@@ -153,25 +170,13 @@ class _PetsState extends State<Pets> {
                 endIndent: 12,
                 height: 10,
                 color: Colors.black,
-              )
+              ),
             ]),
           );
         },
         scrollDirection: Axis.vertical,
       ),
-      Transform(
-          transform: Matrix4.translationValues(0, -50 , 0),
-          child: Center(
-              child: FlatButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Agregar mascota +",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ))))
-    ]);
+    );
   }
 
   String _calcularEdad(String fecha) {
