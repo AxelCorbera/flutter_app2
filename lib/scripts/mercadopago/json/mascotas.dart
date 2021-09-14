@@ -37,6 +37,10 @@ class Item {
     this.nacimiento,
     this.alarmas,
     this.observacion,
+    this.lugar,
+    this.telefono,
+    this.domicilio,
+    this.pelaje
   });
 
   String? id;
@@ -48,6 +52,10 @@ class Item {
   String? apellido;
   String? peso;
   String? nacimiento;
+  String? lugar;
+  String? pelaje;
+  String? telefono;
+  String? domicilio;
   String? alarmas;
   String? observacion;
 
@@ -61,6 +69,10 @@ class Item {
     apellido: json["apellido"],
     peso: json["peso"],
     nacimiento: json["nacimiento"],
+    lugar: json["lugar"],
+    pelaje: json["pelaje"],
+    telefono: json["telefono"],
+    domicilio: json["domicilio"],
     alarmas: json["alarmas"],
     observacion: json["observacion"],
   );
@@ -77,6 +89,11 @@ class Item {
     "nacimiento": nacimiento,
     "alarmas": alarmas,
     "observacion": observacion,
+    "lugar": lugar,
+    "pelaje": pelaje,
+    "telefono": telefono,
+    "domicilio": domicilio,
+
   };
 }
 

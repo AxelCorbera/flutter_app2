@@ -4,6 +4,7 @@ import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
 import 'package:flutter_app2/scripts/mercadopago/json/crearCustomerJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/historial.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
@@ -423,6 +424,54 @@ Future<Mascotas> BuscarMascotas(
   }
 }
 
+Future<Historial> BuscarHistorial(
+    String idUsuario) async {
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/consultarHistorial.php?id=$idUsuario'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+  );
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+
+    //DEVUELVE ARRAY
+
+    return Historial.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la busqueda de Mascotas.');
+  }
+}
+
+Future<String> actualizarMascotas(String customer, String mascotas) async {
+  Map datos = new Map<String, String>();
+  datos["customer"] = customer;
+  datos["mascotas"] = mascotas;
+
+  final response = await http.post(
+    Uri.parse(
+        'http://wh534614.ispot.cc/mypetshop/flutter/actualizarMascotas.php?'),
+    body: datos,
+  );
+  return response.body.toString();
+}
+
+Future<String> actualizarHistorial(String customer, String historial) async {
+  Map datos = new Map<String, String>();
+  datos["customer"] = customer;
+  datos["historial"] = historial;
+
+  final response = await http.post(
+    Uri.parse(
+        'http://wh534614.ispot.cc/mypetshop/flutter/actualizarHistorial.php?'),
+    body: datos,
+  );
+  return response.body.toString();
+}
+
 Future<FotoMascotas> BuscarFotoMascotas(
     String idUsuario) async {
 
@@ -463,7 +512,7 @@ Future<List<Cards>> BuscarTarjetas(String idCustomer) async {
       'Authorization': 'Bearer $accessToken'
     },
   );
-  print(response.body.toString());
+  print("? "+response.body.toString() +" "+ response.statusCode.toString());
   if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
@@ -471,8 +520,9 @@ Future<List<Cards>> BuscarTarjetas(String idCustomer) async {
     return cardsFromJson(response.body);
   } else {
     // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Fallo la busqueda de tarjetas.');
+    print(Exception('Fallo la busqueda de tarjetas.'));
+    List<Cards> resp = [];
+    return resp;
   }
 }
 

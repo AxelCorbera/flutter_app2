@@ -24,8 +24,16 @@ class Cards {
     this.cardholder,
     this.userId,
     this.liveMode,
+    this.paging,
+    this.results,
+    this.message,
+    this.error,
+    this.status,
+    this.cause
   });
 
+  Paging? paging;
+  List<dynamic>? results;
   String? id;
   DateTime? dateCreated;
   DateTime? dateLastUpdated;
@@ -40,6 +48,11 @@ class Cards {
   Cardholder? cardholder;
   String? userId;
   bool? liveMode;
+  String? message;
+  String? error;
+  String? status;
+  List<List<dynamic>>? cause;
+
 
   factory Cards.fromJson(Map<String, dynamic> json) => Cards(
     id: json["id"],
@@ -74,6 +87,14 @@ class Cards {
     "user_id": userId,
     "live_mode": liveMode,
   };
+}
+
+class Paging{
+  Paging({this.total, this.limit,this.offset});
+
+  String? limit;
+  String? offset;
+  String? total;
 }
 
 class Cardholder {

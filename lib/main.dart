@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Home.dart';
+import 'package:flutter_app2/scenes/addPet.dart';
 import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
 import 'package:flutter_app2/scenes/items.dart';
+import 'package:flutter_app2/scenes/petDetails.dart';
 import 'package:flutter_app2/scenes/pets.dart';
 import 'package:flutter_app2/scenes/purcharses.dart';
 import 'package:flutter_app2/scenes/purchasedetails.dart';
@@ -68,6 +70,12 @@ class MyApp extends StatelessWidget {
               return Register();
             case "/Pets":
               return Pets();
+            case "/PetDetails":
+              final args = settings.arguments as MascotaSeleccionada;
+              return PetDetails(argumentos: args,);
+            case "/AddPet":
+              final args = settings.arguments as AgregarMascotas;
+              return AddPet(datos: args,);
             case "/Support":
               return Support();
             case "/Cards":

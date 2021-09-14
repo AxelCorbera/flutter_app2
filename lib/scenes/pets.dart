@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/historial.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart';
@@ -12,6 +13,7 @@ class Pets extends StatefulWidget {
 
 class _PetsState extends State<Pets> {
   Mascotas mascotas = new Mascotas(items: []);
+  Historial historial = new Historial();
   FotoMascotas fotoMascotas = new FotoMascotas(
       id: [], idusuario: [], idmascota: [], nombre: [], imagen: []);
   String menu = 'home';
@@ -39,7 +41,11 @@ class _PetsState extends State<Pets> {
                 Flexible(
                   flex: 2,
                   child: FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed('/AddPet',arguments: AgregarMascotas(mascotas: mascotas, historial: historial))
+                          .then((value) => setState(() {}));
+                    },
                     child: Text(
                       "Agregar mascota +",
                       style: TextStyle(
@@ -102,7 +108,13 @@ class _PetsState extends State<Pets> {
         itemCount: mascotas.items.length,
         itemBuilder: (context, index) {
           return InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('/PetDetails',
+                      arguments: MascotaSeleccionada(
+                          mascotas: mascotas, fotos: fotos, seleccionado: index))
+                  .then((value) => setState(() {}));
+            },
             child: Column(children: <Widget>[
               Row(children: <Widget>[
                 Padding(
@@ -318,10 +330,17 @@ class _PetsState extends State<Pets> {
     // fotoMascotas.idmascota!.forEach((element) { print("b>"+element.toString());});
     // print(fotoMascotas.toString());
     int num = fotoMascotas.idmascota!.indexOf(id);
-    var bytes = base64.decode(fotoMascotas.imagen![num]);
+    var temp = new Uint8List(500);
+    var bytes;
+    if(num >=0 ){
+    bytes = base64.decode(fotoMascotas.imagen![num]);
     fotos.add(MemoryImage(bytes));
     print("elementos: " + fotos.length.toString());
     return new MemoryImage(bytes);
+    }
+    else{
+      return new MemoryImage(temp);
+    }
   }
 
   @override
@@ -334,8 +353,24 @@ class _PetsState extends State<Pets> {
       if (busqueda)
         fotoMascotas = await BuscarFotoMascotas(globals.usuario!.id.toString());
       mascotas = await BuscarMascotas(globals.usuario!.id.toString());
+      historial = await BuscarHistorial(globals.usuario!.id.toString());
       busqueda = false;
       setState(() {});
     } else {}
   }
+}
+
+class MascotaSeleccionada {
+  MascotaSeleccionada({required this.mascotas, required this.fotos, required this.seleccionado});
+
+  Mascotas mascotas;
+  List<MemoryImage> fotos;
+  int seleccionado;
+}
+
+class AgregarMascotas {
+  AgregarMascotas({required this.mascotas, required this.historial});
+
+  Mascotas mascotas;
+  Historial historial;
 }
