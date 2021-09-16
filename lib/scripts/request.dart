@@ -448,7 +448,7 @@ Future<Historial> BuscarHistorial(
 
 Future<String> actualizarMascotas(String customer, String mascotas) async {
   Map datos = new Map<String, String>();
-  datos["customer"] = customer;
+  datos["id"] = customer;
   datos["mascotas"] = mascotas;
 
   final response = await http.post(
@@ -461,7 +461,7 @@ Future<String> actualizarMascotas(String customer, String mascotas) async {
 
 Future<String> actualizarHistorial(String customer, String historial) async {
   Map datos = new Map<String, String>();
-  datos["customer"] = customer;
+  datos["id"] = customer;
   datos["historial"] = historial;
 
   final response = await http.post(

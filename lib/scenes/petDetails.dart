@@ -7,6 +7,7 @@ import 'package:flutter_app2/scenes/pets.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart';
+//import "package:intl/intl.dart" show DateFormat;
 
 class PetDetails extends StatefulWidget {
   const PetDetails({Key? key, required this.argumentos}) : super(key: key);
@@ -28,7 +29,7 @@ class _PetDetailState extends State<PetDetails> {
     fotos = widget.argumentos.fotos;
     int seleccionado = widget.argumentos.seleccionado;
     print(mascotas.items[seleccionado].sexo);
-
+    print('mascota seleccionada: $seleccionado');
     carrito = globals.carrito.id.length;
     return Scaffold(
       backgroundColor: mascotas.items[seleccionado].sexo=="MACHO"?Colors.cyan:Colors.pinkAccent,
@@ -155,210 +156,131 @@ class _PetDetailState extends State<PetDetails> {
   }
 
   Widget _datos(int index) {
-    return Column(
-      children: [
-        Container(
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Nacimiento",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      mascotas.items[index].nacimiento.toString(),
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Santos lugares, Buenos Aires',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20,),
+                Text(
+                  "Nacimiento",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Pelaje",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Gris y blanco',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      ' ',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                SizedBox(
+                  height: 10,
                 ),
-              ),
-            ],
+                _nacimiento(mascotas.items[index].nacimiento.toString()),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Santos lugares, Buenos Aires',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold),
+                ),
+                new Divider(height: 20,color: Colors.black,),
+
+                Text(
+                  "Telefono",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  '11 3573 4301',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Telefono",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '11 3573 4301',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 20,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Direccion",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'R. Peña 1709',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                Text(
+                  "Pelaje",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Gris y blanco',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  ' ',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold),
+                ),
+                new Divider(height: 20, color: Colors.black,),
+                Text(
+                  "Direccion",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'R. Peña 1709',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "",
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    '',
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "",
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    '',
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  Widget _nacimiento(String nac){
+    DateTime date = DateTime.parse(nac);
+    return Text(date.day.toString() +'/'+ date.month.toString() +'/'+ date.year.toString(),style: TextStyle(
+        fontSize: 15,
+        color: Colors.black,
+        fontWeight: FontWeight.bold),);
   }
 
   Widget _historial(int index) {
@@ -541,10 +463,10 @@ class _PetDetailState extends State<PetDetails> {
           ],
         ),
       ),
-      Container(
+      fotos.length>index?Container(
         alignment: Alignment.center,
         constraints: BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
-        decoration: BoxDecoration(
+        decoration:BoxDecoration(
             shape: BoxShape.rectangle,
             image: DecorationImage(
               image: fotos[index],
@@ -559,7 +481,14 @@ class _PetDetailState extends State<PetDetails> {
                   end: Alignment.bottomCenter,
                   colors: [Colors.transparent, Colors.white])),
         ),
-      ),
+      ):Container(
+    alignment: Alignment.center,
+    constraints: BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
+    decoration:BoxDecoration(
+    shape: BoxShape.rectangle,
+    ),
+    child: Icon(Icons.pets,size: 90,color: Colors.grey,),
+    ),
     ];
   }
 

@@ -273,7 +273,7 @@ class _AddPetState extends State<AddPet> {
                     children: [
                       Text(
                         "Fecha de nacimiento:",
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 17),
                       ),
                       FlatButton(
                         onPressed: () {
@@ -449,7 +449,8 @@ class _AddPetState extends State<AddPet> {
     widget.datos.mascotas.items.add(nueva);
     mascotas = widget.datos.mascotas;
     cargando(context);
-    String i  = await actualizarMascotas(globals.usuario!.id.toString(), widget.datos.mascotas.toJson().toString());
+    print('mascotas a actualizad (id) : ' + globals.usuario!.id.toString() + ' / ' + widget.datos.mascotas.toJson().toString());
+    String i  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(widget.datos.mascotas));
     print('termino: $i');
     Navigator.of(context).pop();
     Navigator.of(context).pop();
