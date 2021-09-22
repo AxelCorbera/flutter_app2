@@ -379,11 +379,12 @@ class _PetsState extends State<Pets> {
     } else {}
   }
   Future<void> _eliminarMascota(BuildContext context, Mascotas mascotas, int index) async {
-    mascotas.items.removeAt(index);
     cargando(context);
+    String i2  = await BorrarFoto(globals.usuario!.id.toString(), mascotas.items[index].id.toString());
+    mascotas.items.removeAt(index);
     String i  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(mascotas));
     Navigator.pop(context);
-    print('termino: $i');
+    print('termino: $i y  borro: $i2');
     setState(() {
 
     });

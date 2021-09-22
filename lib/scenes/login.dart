@@ -178,7 +178,7 @@ class _LoginState extends State<Login> {
           _loading = true;
         });
         request.Album token = await request.IniciarSesion(userName, password);
-        print('tokeN ' + token.id.toString());
+        print('tokeN ' + token.token.toString());
 
         if (token.id != '' && token.id != '-1') {
           Usuario usuario = await request.DatosUsuario(token.id, token.token);

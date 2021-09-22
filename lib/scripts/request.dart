@@ -274,6 +274,8 @@ Future<Usuario> DatosUsuario(String id, String token) async {
     },
     body: map,
   );
+
+  print('> '+response.body);
   print(response.statusCode);
   if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
@@ -414,9 +416,11 @@ Future<Mascotas> BuscarMascotas(
   print('http://wh534614.ispot.cc/mypetshop/flutter/consultarMascotas.php?id=$idUsuario');
   if (response.statusCode == 200 || response.statusCode == 201) {
 
-    //DEVUELVE ARRAY
-
-    return Mascotas.fromJson(jsonDecode(response.body));
+    if(response.body.isEmpty){
+      return Mascotas(items: []);
+    }else {
+      return Mascotas.fromJson(jsonDecode(response.body));
+    }
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
@@ -503,10 +507,45 @@ Future<String> CargarFoto(String idUsuario, String idMascota, String nombre, Str
 
   final response = await http.post(
     Uri.parse(
-        'http://wh534614.ispot.cc/mypetshop/flutter/cargarFoto.php?'),
+        'http://wh534614.ispot.cc/mypetshop/cargarFoto.php?'),
     body: datos,
   );
   return response.body.toString();
+}
+
+Future<String> ActualizarFoto(String customer, String mascotas, String nombre, String imagen) async {
+  Map datos = new Map<String, String>();
+  datos["idusuario"] = customer;
+  datos["idmascota"] = mascotas;
+  datos["nombre"] = nombre;
+  datos["imagen"] = imagen;
+
+  final response = await http.post(
+    Uri.parse(
+        'http://wh534614.ispot.cc/mypetshop/actualizarFoto.php?'),
+    body: datos,
+  );
+  return response.body.toString();
+}
+
+Future<String> BorrarFoto(
+    String idUsuario, String idMascota) async {
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/eliminarFoto.php?idusuario=$idUsuario&idmascota=$idMascota'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+  );
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+
+    return response.body;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la busqueda de Mascotas.');
+  }
 }
 
 Future<List<Cards>> BuscarTarjetas(String idCustomer) async {

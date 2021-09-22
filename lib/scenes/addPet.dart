@@ -248,8 +248,8 @@ class _AddPetState extends State<AddPet> {
                       ),
                       isExpanded: true,
                       items: [
-                        'Hembra',
-                        'Macho',
+                        'HEMBRA',
+                        'MACHO',
                       ].map((String val) {
                         return DropdownMenuItem(
                           value: val,
@@ -421,9 +421,13 @@ class _AddPetState extends State<AddPet> {
 
   String _imagen(XFile image) {
     File i = File(image.path);
-    List<int> imageBytes = i.readAsBytesSync();
-    var bytes = base64.encode(imageBytes);
-    return bytes;
+    if(i!=File('')){
+      return'';}
+    else {
+      List<int> imageBytes = i.readAsBytesSync();
+      var bytes = base64.encode(imageBytes);
+      return bytes;
+    }
   }
 
   Future<void> _agregarMascota(BuildContext context) async {
@@ -439,7 +443,7 @@ class _AddPetState extends State<AddPet> {
 
     Item nueva = Item(
         id: i.toString(),
-        //foto: _imagen(imageFile),
+        foto: '',
         especie: especie,
         sexo: sexo,
         raza: raza,
@@ -458,7 +462,11 @@ class _AddPetState extends State<AddPet> {
     cargando(context);
     print('mascotas a actualizad (id) : ' + globals.usuario!.id.toString() + ' / ' + widget.datos.mascotas.toJson().toString());
     String s  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(widget.datos.mascotas));
-    String s2  = await CargarFoto(globals.usuario!.id.toString(), i.toString(), nombre, _imagen(imageFile));
+    String s2='';
+    print('>>> ' + _imagen(imageFile));
+    if(_imagen(imageFile).length>0)
+    s2  = await CargarFoto(globals.usuario!.id.toString(), i.toString(), nombre, _imagen(imageFile));
+    print(s2 + ' ' + _imagen(imageFile));
     Navigator.of(context).pop();
     Navigator.of(context).pop();
   }

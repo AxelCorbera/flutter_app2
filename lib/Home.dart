@@ -124,7 +124,7 @@ class _HomeState extends State<Home> {
                                 AssetImage("lib/assets/images/loader.gif"),
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 5,
                           ),
                           Center(
                             child: Text(
