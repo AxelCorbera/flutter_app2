@@ -358,7 +358,6 @@ class _AddPetState extends State<AddPet> {
                   if (_keyForm.currentState!.validate()) {
                     _agregarMascota(context);
                   }
-                  ;
                 },
                 child: Text(
                   'Agregar',
@@ -430,8 +429,16 @@ class _AddPetState extends State<AddPet> {
   Future<void> _agregarMascota(BuildContext context) async {
     _keyForm.currentState!.save();
     print(mascotas.toJson().toString());
+    int i = 0;
+
+    for(int j = 0 ; j < mascotas.items.length ; j++){
+      if(mascotas.items[j].id == i.toString()){
+        i++;
+      }
+    }
+
     Item nueva = Item(
-        id: '',
+        id: i.toString(),
         //foto: _imagen(imageFile),
         especie: especie,
         sexo: sexo,
@@ -450,8 +457,8 @@ class _AddPetState extends State<AddPet> {
     mascotas = widget.datos.mascotas;
     cargando(context);
     print('mascotas a actualizad (id) : ' + globals.usuario!.id.toString() + ' / ' + widget.datos.mascotas.toJson().toString());
-    String i  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(widget.datos.mascotas));
-    print('termino: $i');
+    String s  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(widget.datos.mascotas));
+    String s2  = await CargarFoto(globals.usuario!.id.toString(), i.toString(), nombre, _imagen(imageFile));
     Navigator.of(context).pop();
     Navigator.of(context).pop();
   }

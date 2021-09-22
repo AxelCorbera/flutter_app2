@@ -481,7 +481,7 @@ Future<FotoMascotas> BuscarFotoMascotas(
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
   );
-  //print('http://wh534614.ispot.cc/mypetshop/flutter/consultarMascotas.php?id=$idUsuario');
+  print('http://wh534614.ispot.cc/mypetshop/consultarFotoMascota.php?id=$idUsuario');
   if (response.statusCode == 200 || response.statusCode == 201) {
 
     //DEVUELVE ARRAY
@@ -492,6 +492,21 @@ Future<FotoMascotas> BuscarFotoMascotas(
     // then throw an exception.
     throw Exception('Fallo la busqueda de foto de mascota.');
   }
+}
+
+Future<String> CargarFoto(String idUsuario, String idMascota, String nombre, String imagen) async {
+  Map datos = new Map<String, String>();
+  datos["idusuario"] = idUsuario;
+  datos["idmascota"] = idMascota;
+  datos["nombre"] = nombre;
+  datos["imagen"] = imagen;
+
+  final response = await http.post(
+    Uri.parse(
+        'http://wh534614.ispot.cc/mypetshop/flutter/cargarFoto.php?'),
+    body: datos,
+  );
+  return response.body.toString();
 }
 
 Future<List<Cards>> BuscarTarjetas(String idCustomer) async {

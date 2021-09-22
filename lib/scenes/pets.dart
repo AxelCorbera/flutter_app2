@@ -125,7 +125,7 @@ class _PetsState extends State<Pets> {
               Row(children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: mascotas.items.length > index+1?
+                  child: mascotas.items.length > index?
                   Container(
                     constraints: BoxConstraints(
                       minWidth: 44,
