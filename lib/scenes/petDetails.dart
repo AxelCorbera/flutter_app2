@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/scenes/pets.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/historial.dart' as h;
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart';
@@ -19,6 +20,7 @@ class PetDetails extends StatefulWidget {
 
 class _PetDetailState extends State<PetDetails> {
   Mascotas mascotas = new Mascotas(items: []);
+  h.Historial historial = new h.Historial(items: []);
   String menu = 'home';
   bool busqueda = true;
   List<MemoryImage> fotos = [];
@@ -37,6 +39,8 @@ class _PetDetailState extends State<PetDetails> {
   String raza = '';
   String peso = "";
   DateTime nacimiento = DateTime.now();
+  DateTime fecha1 = DateTime.now();
+  DateTime fecha2 = DateTime.now();
   String alarmas = "";
   String observacion = "";
   String lugar = "";
@@ -46,11 +50,12 @@ class _PetDetailState extends State<PetDetails> {
   String especie = "";
 
   File file = File('');
-  bool nueva =false;
+  bool nueva = false;
 
   @override
   Widget build(BuildContext context) {
     mascotas = widget.argumentos.mascotas;
+    historial = _juntarHistorial(widget.argumentos.historial, widget.argumentos.seleccionado);
     fotos = widget.argumentos.fotos;
     int seleccionado = widget.argumentos.seleccionado;
     nacimiento =
@@ -632,31 +637,14 @@ class _PetDetailState extends State<PetDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "historias clinicas",
+                      "Historias clinicas",
                       style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 18,
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
-                      height: 150,
-                    ),
-                    Text(
-                      '',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
+                      height: 15,
                     ),
                   ],
                 ),
@@ -666,32 +654,16 @@ class _PetDetailState extends State<PetDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      ' ',
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
+                    FlatButton.icon(
+                      onPressed: () {
+                        _nuevaHistoria(context, index);
+                      },
+                      icon: Icon(
+                        Icons.add_circle,
+                        size: 18,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      label: Text(''),
                     ),
                   ],
                 ),
@@ -699,6 +671,7 @@ class _PetDetailState extends State<PetDetails> {
             ],
           ),
         ),
+        _listadoHistorias()
       ],
     );
   }
@@ -788,8 +761,7 @@ class _PetDetailState extends State<PetDetails> {
                                       child: FlatButton.icon(
                                           onPressed: () {
                                             editar = !editar;
-                                            if(!editar)
-                                              nueva=false;
+                                            if (!editar) nueva = false;
                                             setState(() {});
                                           },
                                           icon: !editar
@@ -844,39 +816,42 @@ class _PetDetailState extends State<PetDetails> {
                         colors: [Colors.transparent, Colors.white])),
               ),
             )
-          : nueva?Container(
-        alignment: Alignment.center,
-        constraints:
-        BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          //file!=''?FileImage(file):fotos[index]
-          image: DecorationImage(
-            image: FileImage(file),
-            fit: BoxFit.cover,
-          ),),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              gradient: LinearGradient(
-                  begin: Alignment.center,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.white])),
-        ),
-      ): Container(
-              alignment: Alignment.center,
-              constraints:
-                  BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-              ),
-              child: Icon(
-                Icons.pets,
-                size: 90,
-                color: Colors.grey,
-              ),
-            ),
+          : nueva
+              ? Container(
+                  alignment: Alignment.center,
+                  constraints:
+                      BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    //file!=''?FileImage(file):fotos[index]
+                    image: DecorationImage(
+                      image: FileImage(file),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        gradient: LinearGradient(
+                            begin: Alignment.center,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.white])),
+                  ),
+                )
+              : Container(
+                  alignment: Alignment.center,
+                  constraints:
+                      BoxConstraints(maxHeight: 230, maxWidth: double.infinity),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Icon(
+                    Icons.pets,
+                    size: 90,
+                    color: Colors.grey,
+                  ),
+                ),
       Container(
           alignment: Alignment.bottomRight,
           constraints:
@@ -884,7 +859,7 @@ class _PetDetailState extends State<PetDetails> {
           decoration: BoxDecoration(
               //shape: BoxShape.rectangle,
               ),
-          child: editar?_nuevaFoto(context):null),
+          child: editar ? _nuevaFoto(context) : null),
     ];
   }
 
@@ -932,7 +907,6 @@ class _PetDetailState extends State<PetDetails> {
     super.dispose();
   }
 
-
   _selectDate(BuildContext context, int index) async {
     final DateTime? selected = await showDatePicker(
       context: context,
@@ -953,11 +927,7 @@ class _PetDetailState extends State<PetDetails> {
     DateTime ahora = DateTime.now();
     var cuenta = ahora.difference(nacimiento).inDays;
     double diferencia = cuenta / 365;
-    if (diferencia.toString().length > 1) {
-      return diferencia.toStringAsPrecision(2);
-    } else {
-      return diferencia.toString();
-    }
+    return diferencia.toStringAsPrecision(2);
   }
 
   Future<void> _actualizarMascota(BuildContext context, int index) async {
@@ -976,7 +946,7 @@ class _PetDetailState extends State<PetDetails> {
     mascotas.items[index].pelaje = pelaje;
     mascotas.items[index].especie = especie;
 
-    cargando(context);
+    cargando(context, 'Editando informacion');
     print('mascotas a actualizad (id) : ' +
         globals.usuario!.id.toString() +
         ' / ' +
@@ -986,8 +956,11 @@ class _PetDetailState extends State<PetDetails> {
     String s2 = '';
     print('>>> ' + _imagen(imageFile));
     if (_imagen(imageFile).length > 0)
-      s2 = await ActualizarFoto(globals.usuario!.id.toString(),
-          mascotas.items[index].id.toString(), mascotas.items[index].nombre.toString(), _imagen(imageFile));
+      s2 = await ActualizarFoto(
+          globals.usuario!.id.toString(),
+          mascotas.items[index].id.toString(),
+          mascotas.items[index].nombre.toString(),
+          _imagen(imageFile));
     print(s2 + ' <><> ' + _imagen(imageFile));
     Navigator.of(context).pop();
     Navigator.of(context).pop();
@@ -996,13 +969,12 @@ class _PetDetailState extends State<PetDetails> {
   String _imagen(XFile image) {
     File i = File(image.path);
 
-      List<int> imageBytes = i.readAsBytesSync();
-      var bytes = base64.encode(imageBytes);
-      return bytes;
-
+    List<int> imageBytes = i.readAsBytesSync();
+    var bytes = base64.encode(imageBytes);
+    return bytes;
   }
 
-  void cargando(BuildContext context) {
+  void cargando(BuildContext context, String msj) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1017,13 +989,500 @@ class _PetDetailState extends State<PetDetails> {
                 SizedBox(
                   height: 20,
                 ),
-                Text("Editando informacion"),
+                Text(msj),
                 SizedBox(
                   height: 20,
                 ),
               ],
             ),
           );
+        });
+  }
+
+  void _nuevaHistoria2(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: SingleChildScrollView(
+            child: Form(
+              child: Container(
+                child: Column(
+                  children: <Widget>[],
+                ),
+              ),
+            ),
+          ));
+        });
+  }
+
+  void _nuevaHistoria(BuildContext context, int index) {
+    GlobalKey<FormState> _keyForm2 = GlobalKey();
+    h.Item historia = new h.Item(
+       id: "",
+       idMascota: "",
+       tipo: "",
+       fecha: "",
+       nombre: "",
+       peso: "",
+       proximaFecha: "",
+       lugar: "",
+       medicamento: "",
+       observaciones: "",
+    );
+    var d1 = 0;
+    var m1 = 0;
+    var a1 = 0;
+    var d2 = 0;
+    var m2 = 0;
+    var a2 = 0;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: SingleChildScrollView(
+            child: Form(
+              key: _keyForm2,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Historia'),
+                      DropdownButtonFormField(
+                        onTap: () {},
+                        onSaved: (value) {
+                        },
+                        onChanged: (value) {
+                          historia.tipo = value.toString();
+                        },
+                        hint: Text(
+                          'historia',
+                        ),
+                        isExpanded: true,
+                        items: [
+                          'VACUNA',
+                          'DESPARACITACION',
+                          'CASTRACION',
+                          'OPERACION',
+                          'CONTROL',
+                          'OTRO'
+                        ].map((String val) {
+                          return DropdownMenuItem(
+                            value: val,
+                            child: Text(
+                              val,
+                            ),
+                          );
+                        }).toList(),
+                        validator: (value) {
+                          if (value==null) {
+                            return 'Este campo es obligatorio';
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text('Fecha'),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                d1= int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'DIA',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                '11',
+                                '12',
+                                '13',
+                                '14',
+                                '15',
+                                '16',
+                                '17',
+                                '18',
+                                '19',
+                                '20',
+                                '21',
+                                '22',
+                                '23',
+                                '24',
+                                '25',
+                                '26',
+                                '27',
+                                '28',
+                                '29',
+                                '30',
+                                '31'
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value==null) {
+                                  return 'dia?';
+                                }
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                m1 = int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'MES',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                '11',
+                                '12'
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value==null) {
+                                  return 'mes?';
+                                }
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                a1 = int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'AÑO',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '1990',
+                                '1991',
+                                '1992',
+                                '1993',
+                                '1994',
+                                '1995',
+                                '1996',
+                                '1997',
+                                '1998',
+                                '1999',
+                                '2000',
+                                '2001',
+                                '2002',
+                                '2003',
+                                '2004',
+                                '2005',
+                                '2006',
+                                '2007',
+                                '2008',
+                                '2009',
+                                '2010',
+                                '2011',
+                                '2012',
+                                '2013',
+                                '2014',
+                                '2015',
+                                '2016',
+                                '2017',
+                                '2018',
+                                '2019',
+                                '2020',
+                                '2021',
+                                '2022',
+                                '2023',
+                                '2024',
+                                '2025',
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value==null) {
+                                  return 'año?';
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: "Peso: ",
+                        ),
+                        onSaved: (value) {
+                        },
+                        onChanged: (value){
+                          historia.peso = value.toString();
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text('Fecha de revision'),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                d2 = int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'DIA',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                '11',
+                                '12',
+                                '13',
+                                '14',
+                                '15',
+                                '16',
+                                '17',
+                                '18',
+                                '19',
+                                '20',
+                                '21',
+                                '22',
+                                '23',
+                                '24',
+                                '25',
+                                '26',
+                                '27',
+                                '28',
+                                '29',
+                                '30',
+                                '31'
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                m2 = int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'MES',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                '11',
+                                '12'
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Flexible(
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {
+                              },
+                              onChanged: (value) {
+                                a2 = int.parse(value.toString());
+                              },
+                              hint: Text(
+                                'AÑO',
+                              ),
+                              isExpanded: true,
+                              items: [
+                                '2021',
+                                '2022',
+                                '2023',
+                                '2024',
+                                '2025',
+                              ].map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Lugar: *",
+                        ),
+                        onSaved: (value) {
+                          historia.lugar = value.toString();
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Este campo es obligatorio';
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text('Medicacion'),
+                      ),
+                      DropdownButtonFormField(
+                        onTap: () {},
+                        onSaved: (value) {
+                        },
+                        onChanged: (value) {
+                          historia.medicamento = value.toString();
+                        },
+                        hint: Text(
+                          'medicacion',
+                        ),
+                        isExpanded: true,
+                        items: ['NO', 'SI'].map((String val) {
+                          return DropdownMenuItem(
+                            value: val,
+                            child: Text(
+                              val,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      TextFormField(
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          labelText: "Observaciones: ",
+                        ),
+                        onSaved: (value) {
+                        },
+                        onChanged: (value){
+                          historia.observaciones = value.toString();
+                        },
+                      ),
+                      ButtonBar(
+                        children: <Widget>[
+                          RaisedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancelar',
+                                style: TextStyle(color: Colors.black)),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              print(d1+m1+a1);
+                              if(_keyForm2.currentState!.validate()){
+                                //print('$d1 / $m1 / $a1');
+                                var t = DateTime(a1, m1, d1);
+                                historia.fecha = t.toString();
+                                if(d2!=null && m2!=null && a2!=null){
+                                  DateTime t2 = new DateTime(a2,m2,d2);
+                                  historia.proximaFecha = t2.toString();
+                                }else{
+                                  historia.proximaFecha = DateTime.now().toString();
+                                }
+                                int i =0;
+                                mascotas.items.forEach((element) {
+                                  if(element.id == i){
+                                    i++;
+                                  }
+                                });
+                                historia.id = i.toString();
+                                historia.idMascota = mascotas.items[index].id;
+                                historia.nombre = mascotas.items[index].nombre;
+                                _agregarHistoria(historia);
+                              }
+                            },
+                            child: Text(
+                              'Agregar',
+                              style: TextStyle(
+                                  color: Theme.of(context).secondaryHeaderColor),
+                            ),
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ],
+                      )
+                    ]),
+              ),
+            ),
+          ));
         });
   }
 
@@ -1075,14 +1534,111 @@ class _PetDetailState extends State<PetDetails> {
       nueva = true;
       print(_imagen(image));
       print('hay foto');
+    } else {
+      nueva = false;
+      file = File('');
+      imageFile = XFile('');
+      print('NO hay foto');
     }
-    else
-      {
-        nueva = false;
-        file= File('');
-        imageFile = XFile('');
-        print('NO hay foto');
-      }
     setState(() {});
   }
+
+  void _agregarHistoria(h.Item historia) async{
+    print('1');
+    historial.items!.add(historia);
+    print('2');
+    cargando(context, 'Agregando historia');
+    print('3');
+    print(h.historialToJson(historial));
+    String s = await actualizarHistorial(globals.usuario!.id.toString(), h.historialToJson(historial));
+    print('s');
+    Navigator.pop(context);
+    Navigator.pop(context);
+    print('5');
+    setState(() {
+
+    });
+  }
+
+  Widget _listadoHistorias() {
+    return Container(
+      color: Colors.white,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: historial.items!.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              print('presiono historial $index');
+              // Navigator.of(context)
+              //     .pushNamed('/PetDetails',
+              //     arguments: MascotaSeleccionada(
+              //         mascotas: mascotas,
+              //         historial: historial,
+              //         fotos: fotos,
+              //         seleccionado: index))
+              //     .then((value) => setState(() {}));
+            },
+            child:
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: Container(
+                            color: Colors.white,
+                            constraints: BoxConstraints(
+                              minHeight: 30,
+                            ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(historial.items![index].tipo.toString(),
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold
+                                  ),),
+                              ),
+                          ),
+                        ),
+                        Flexible(
+                          child: Container(
+                            color: Colors.white,
+                            constraints: BoxConstraints(
+                              minHeight: 30,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(historial.items![index].fecha.toString(),
+                                style: TextStyle(
+                                    color: Colors.black54
+                                ),),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider()
+                ],
+              ),
+          );
+        },
+      ),
+    );
+  }
+
+  h.Historial _juntarHistorial(h.Historial hist, int index) {
+    h.Historial his = h.Historial(items: []);
+    hist.items!.forEach((element) {
+      if(element.idMascota == mascotas.items[index].id){
+        his.items!.add(element);
+      }
+    });
+    return his;
+  }
+
 }

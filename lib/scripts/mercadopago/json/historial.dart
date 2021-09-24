@@ -27,6 +27,7 @@ class Historial {
 class Item {
   Item({
     this.id,
+    this.idMascota,
     this.tipo,
     this.fecha,
     this.nombre,
@@ -38,6 +39,7 @@ class Item {
   });
 
   String? id;
+  String? idMascota;
   String? tipo;
   String? fecha;
   String? nombre;
@@ -49,6 +51,7 @@ class Item {
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
     id: json["id"],
+    idMascota: json["idMascota"],
     tipo: json["tipo"],
     fecha: json["fecha"],
     nombre: json["nombre"],
@@ -61,6 +64,7 @@ class Item {
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "idMascota": idMascota,
     "tipo": tipo,
     "fecha": fecha,
     "nombre": nombre,

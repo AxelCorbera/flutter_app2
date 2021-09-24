@@ -117,6 +117,7 @@ class _PetsState extends State<Pets> {
                   .pushNamed('/PetDetails',
                       arguments: MascotaSeleccionada(
                           mascotas: mascotas,
+                          historial: historial,
                           fotos: fotos,
                           seleccionado: index))
                   .then((value) => setState(() {}));
@@ -125,36 +126,40 @@ class _PetsState extends State<Pets> {
               Row(children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: mascotas.items.length > index?
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: 44,
-                      minHeight: 44,
-                      maxWidth: 64,
-                      maxHeight: 64,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image:
-                            _imagen(mascotas.items[index].id.toString(), index),
-                      ),
-                    ),
-                  ):Container(
-                    constraints: BoxConstraints(
-                      minWidth: 64,
-                      minHeight: 64,
-                      maxWidth: 64,
-                      maxHeight: 64,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.pets, color: Theme.of(context).secondaryHeaderColor,),
-                  ),
+                  child: mascotas.items.length > index
+                      ? Container(
+                          constraints: BoxConstraints(
+                            minWidth: 44,
+                            minHeight: 44,
+                            maxWidth: 64,
+                            maxHeight: 64,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: _imagen(
+                                  mascotas.items[index].id.toString(), index),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          constraints: BoxConstraints(
+                            minWidth: 64,
+                            minHeight: 64,
+                            maxWidth: 64,
+                            maxHeight: 64,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.pets,
+                            color: Theme.of(context).secondaryHeaderColor,
+                          ),
+                        ),
                 ),
                 Expanded(
                   child: Column(
@@ -374,20 +379,26 @@ class _PetsState extends State<Pets> {
         fotoMascotas = await BuscarFotoMascotas(globals.usuario!.id.toString());
       mascotas = await BuscarMascotas(globals.usuario!.id.toString());
       historial = await BuscarHistorial(globals.usuario!.id.toString());
+      print('historiales: ' + historial.items!.length.toString());
+      historial.items!.forEach((element) {
+        print(element.idMascota.toString() + ' ' + element.tipo.toString());
+      });
       busqueda = false;
       setState(() {});
     } else {}
   }
-  Future<void> _eliminarMascota(BuildContext context, Mascotas mascotas, int index) async {
+
+  Future<void> _eliminarMascota(
+      BuildContext context, Mascotas mascotas, int index) async {
     cargando(context);
-    String i2  = await BorrarFoto(globals.usuario!.id.toString(), mascotas.items[index].id.toString());
+    String i2 = await BorrarFoto(
+        globals.usuario!.id.toString(), mascotas.items[index].id.toString());
     mascotas.items.removeAt(index);
-    String i  = await actualizarMascotas(globals.usuario!.id.toString(), mascotasToJson(mascotas));
+    String i = await actualizarMascotas(
+        globals.usuario!.id.toString(), mascotasToJson(mascotas));
     Navigator.pop(context);
     print('termino: $i y  borro: $i2');
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void cargando(BuildContext context) {
@@ -402,7 +413,9 @@ class _PetsState extends State<Pets> {
                   padding: const EdgeInsets.all(8.0),
                   child: CircularProgressIndicator(),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           );
@@ -419,9 +432,9 @@ class _PetsState extends State<Pets> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Desea eliminar a \"'
-                  + mascotas.items[index].nombre.toString()
-                      + '\" de tus mascotas?'),
+                  child: Text('Desea eliminar a \"' +
+                      mascotas.items[index].nombre.toString() +
+                      '\" de tus mascotas?'),
                 ),
                 SizedBox(
                   height: 20,
@@ -429,13 +442,18 @@ class _PetsState extends State<Pets> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    FlatButton(onPressed: (){
-                      Navigator.pop(context);
-                    }, child: Text('Cancelar')),
-                    RaisedButton(onPressed: (){
-                      _eliminarMascota(context, mascotas, index);
-                      Navigator.pop(context);
-                    },child: Text('Eliminar'),)
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Cancelar')),
+                    RaisedButton(
+                      onPressed: () {
+                        _eliminarMascota(context, mascotas, index);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Eliminar'),
+                    )
                   ],
                 ),
                 SizedBox(
@@ -452,11 +470,13 @@ class MascotaSeleccionada {
   MascotaSeleccionada(
       {required this.mascotas,
       required this.fotos,
-      required this.seleccionado});
+      required this.seleccionado,
+      required this.historial});
 
   Mascotas mascotas;
   List<MemoryImage> fotos;
   int seleccionado;
+  Historial historial;
 }
 
 class AgregarMascotas {
