@@ -119,13 +119,13 @@ class _categoryState extends State<Category> {
                                     AssetImage("lib/assets/images/loader.gif"),
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Center(
                                 child: Text(
                                   categoriasNombres[index],
                                   style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),

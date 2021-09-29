@@ -90,7 +90,7 @@ class _ItemsState extends State<Items> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 5,
+                                    height: 0,
                                   ),
                                   Row(
                                     mainAxisAlignment:
@@ -103,14 +103,14 @@ class _ItemsState extends State<Items> {
                                         Text(
                                           snapshot.data!.cantidad[index] + " Kg",
                                           style: TextStyle(
-                                              fontSize: 12,
+                                              fontSize: 10,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       Text(
                                         "\$ " +
                                             snapshot.data!.precio[index].toString(),
                                         style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],

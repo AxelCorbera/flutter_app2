@@ -155,16 +155,16 @@ class _HomeState extends State<Home> {
                 DrawerHeader(
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.blue[800],
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Image(
                         image: AssetImage('lib/assets/images/logoMorita2.png'),
-                        width: 100,
-                        height: 100,
+                        width: 80,
+                        height: 80,
                       ),
                       Text(
                         'Moritas Shop',

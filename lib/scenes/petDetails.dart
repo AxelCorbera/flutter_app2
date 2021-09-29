@@ -56,6 +56,7 @@ class _PetDetailState extends State<PetDetails> {
   Widget build(BuildContext context) {
     mascotas = widget.argumentos.mascotas;
     historial = _juntarHistorial(widget.argumentos.historial, widget.argumentos.seleccionado);
+    print(h.historialToJson(widget.argumentos.historial));
     fotos = widget.argumentos.fotos;
     int seleccionado = widget.argumentos.seleccionado;
     nacimiento =
@@ -1545,12 +1546,12 @@ class _PetDetailState extends State<PetDetails> {
 
   void _agregarHistoria(h.Item historia) async{
     print('1');
-    historial.items!.add(historia);
+    h.Historial his = widget.argumentos.historial;
+    his.items!.add(historia);
     print('2');
     cargando(context, 'Agregando historia');
     print('3');
-    print(h.historialToJson(historial));
-    String s = await actualizarHistorial(globals.usuario!.id.toString(), h.historialToJson(historial));
+    String s = await actualizarHistorial(globals.usuario!.id.toString(), h.historialToJson(his));
     print('s');
     Navigator.pop(context);
     Navigator.pop(context);
@@ -1612,10 +1613,7 @@ class _PetDetailState extends State<PetDetails> {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(historial.items![index].fecha.toString(),
-                                style: TextStyle(
-                                    color: Colors.black54
-                                ),),
+                              child: _fecha(historial.items![index].fecha.toString())
                             ),
                           ),
                         ),
@@ -1629,6 +1627,14 @@ class _PetDetailState extends State<PetDetails> {
         },
       ),
     );
+  }
+
+  Widget _fecha(String fecha){
+    DateTime date = DateTime.parse(fecha);
+    return Text(date.day.toString()+' / '+date.month.toString()+' / '+ date.year.toString(),
+      style: TextStyle(
+        color: Colors.black54
+    ),);
   }
 
   h.Historial _juntarHistorial(h.Historial hist, int index) {
