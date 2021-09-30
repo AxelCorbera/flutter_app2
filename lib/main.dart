@@ -3,6 +3,7 @@ import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/addPet.dart';
 import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
+import 'package:flutter_app2/scenes/infoPayment.dart';
 import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scenes/petDetails.dart';
 import 'package:flutter_app2/scenes/pets.dart';
@@ -49,6 +50,8 @@ class MyApp extends StatelessWidget {
               return Login();
             case "/Cart":
               return Cart();
+            case "/InfoPayment":
+              return InfoPayment();
             case "/Purchases":
               return Purchases();
             case "/PurchaseDetails":

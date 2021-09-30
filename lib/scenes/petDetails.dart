@@ -55,7 +55,8 @@ class _PetDetailState extends State<PetDetails> {
   @override
   Widget build(BuildContext context) {
     mascotas = widget.argumentos.mascotas;
-    historial = _juntarHistorial(widget.argumentos.historial, widget.argumentos.seleccionado);
+    historial = _juntarHistorial(
+        widget.argumentos.historial, widget.argumentos.seleccionado);
     print(h.historialToJson(widget.argumentos.historial));
     fotos = widget.argumentos.fotos;
     int seleccionado = widget.argumentos.seleccionado;
@@ -1000,36 +1001,19 @@ class _PetDetailState extends State<PetDetails> {
         });
   }
 
-  void _nuevaHistoria2(BuildContext context, int index) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              content: SingleChildScrollView(
-            child: Form(
-              child: Container(
-                child: Column(
-                  children: <Widget>[],
-                ),
-              ),
-            ),
-          ));
-        });
-  }
-
   void _nuevaHistoria(BuildContext context, int index) {
     GlobalKey<FormState> _keyForm2 = GlobalKey();
     h.Item historia = new h.Item(
-       id: "",
-       idMascota: "",
-       tipo: "",
-       fecha: "",
-       nombre: "",
-       peso: "",
-       proximaFecha: "",
-       lugar: "",
-       medicamento: "",
-       observaciones: "",
+      id: "",
+      idMascota: "",
+      tipo: "",
+      fecha: "",
+      nombre: "",
+      peso: "",
+      proximaFecha: "",
+      lugar: "",
+      medicamento: "",
+      observaciones: "",
     );
     var d1 = 0;
     var m1 = 0;
@@ -1046,14 +1030,13 @@ class _PetDetailState extends State<PetDetails> {
               key: _keyForm2,
               child: Container(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('Historia'),
                       DropdownButtonFormField(
                         onTap: () {},
-                        onSaved: (value) {
-                        },
+                        onSaved: (value) {},
                         onChanged: (value) {
                           historia.tipo = value.toString();
                         },
@@ -1077,7 +1060,7 @@ class _PetDetailState extends State<PetDetails> {
                           );
                         }).toList(),
                         validator: (value) {
-                          if (value==null) {
+                          if (value == null) {
                             return 'Este campo es obligatorio';
                           }
                         },
@@ -1091,10 +1074,9 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
-                                d1= int.parse(value.toString());
+                                d1 = int.parse(value.toString());
                               },
                               hint: Text(
                                 'DIA',
@@ -1141,7 +1123,7 @@ class _PetDetailState extends State<PetDetails> {
                                 );
                               }).toList(),
                               validator: (value) {
-                                if (value==null) {
+                                if (value == null) {
                                   return 'dia?';
                                 }
                               },
@@ -1150,8 +1132,7 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
                                 m1 = int.parse(value.toString());
                               },
@@ -1181,7 +1162,7 @@ class _PetDetailState extends State<PetDetails> {
                                 );
                               }).toList(),
                               validator: (value) {
-                                if (value==null) {
+                                if (value == null) {
                                   return 'mes?';
                                 }
                               },
@@ -1190,8 +1171,7 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
                                 a1 = int.parse(value.toString());
                               },
@@ -1245,7 +1225,7 @@ class _PetDetailState extends State<PetDetails> {
                                 );
                               }).toList(),
                               validator: (value) {
-                                if (value==null) {
+                                if (value == null) {
                                   return 'año?';
                                 }
                               },
@@ -1258,9 +1238,8 @@ class _PetDetailState extends State<PetDetails> {
                         decoration: InputDecoration(
                           labelText: "Peso: ",
                         ),
-                        onSaved: (value) {
-                        },
-                        onChanged: (value){
+                        onSaved: (value) {},
+                        onChanged: (value) {
                           historia.peso = value.toString();
                         },
                       ),
@@ -1273,8 +1252,7 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
                                 d2 = int.parse(value.toString());
                               },
@@ -1327,8 +1305,7 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
                                 m2 = int.parse(value.toString());
                               },
@@ -1362,8 +1339,7 @@ class _PetDetailState extends State<PetDetails> {
                           Flexible(
                             child: DropdownButtonFormField(
                               onTap: () {},
-                              onSaved: (value) {
-                              },
+                              onSaved: (value) {},
                               onChanged: (value) {
                                 a2 = int.parse(value.toString());
                               },
@@ -1408,8 +1384,7 @@ class _PetDetailState extends State<PetDetails> {
                       ),
                       DropdownButtonFormField(
                         onTap: () {},
-                        onSaved: (value) {
-                        },
+                        onSaved: (value) {},
                         onChanged: (value) {
                           historia.medicamento = value.toString();
                         },
@@ -1427,13 +1402,11 @@ class _PetDetailState extends State<PetDetails> {
                         }).toList(),
                       ),
                       TextFormField(
-                        maxLines: 2,
                         decoration: InputDecoration(
                           labelText: "Observaciones: ",
                         ),
-                        onSaved: (value) {
-                        },
-                        onChanged: (value){
+                        onSaved: (value) {},
+                        onChanged: (value) {
                           historia.observaciones = value.toString();
                         },
                       ),
@@ -1448,20 +1421,21 @@ class _PetDetailState extends State<PetDetails> {
                           ),
                           RaisedButton(
                             onPressed: () {
-                              print(d1+m1+a1);
-                              if(_keyForm2.currentState!.validate()){
+                              print(d1 + m1 + a1);
+                              if (_keyForm2.currentState!.validate()) {
                                 //print('$d1 / $m1 / $a1');
                                 var t = DateTime(a1, m1, d1);
                                 historia.fecha = t.toString();
-                                if(d2!=null && m2!=null && a2!=null){
-                                  DateTime t2 = new DateTime(a2,m2,d2);
+                                if (d2 != 0 && m2 != 0 && a2 != 0) {
+                                  DateTime t2 = new DateTime(a2, m2, d2);
                                   historia.proximaFecha = t2.toString();
-                                }else{
-                                  historia.proximaFecha = DateTime.now().toString();
+                                } else {
+                                  historia.proximaFecha =
+                                      DateTime.now().toString();
                                 }
-                                int i =0;
+                                int i = 0;
                                 mascotas.items.forEach((element) {
-                                  if(element.id == i){
+                                  if (element.id == i.toString()) {
                                     i++;
                                   }
                                 });
@@ -1474,7 +1448,8 @@ class _PetDetailState extends State<PetDetails> {
                             child: Text(
                               'Agregar',
                               style: TextStyle(
-                                  color: Theme.of(context).secondaryHeaderColor),
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
                             ),
                             color: Theme.of(context).primaryColor,
                           ),
@@ -1544,21 +1519,15 @@ class _PetDetailState extends State<PetDetails> {
     setState(() {});
   }
 
-  void _agregarHistoria(h.Item historia) async{
-    print('1');
+  void _agregarHistoria(h.Item historia) async {
     h.Historial his = widget.argumentos.historial;
     his.items!.add(historia);
-    print('2');
     cargando(context, 'Agregando historia');
-    print('3');
-    String s = await actualizarHistorial(globals.usuario!.id.toString(), h.historialToJson(his));
-    print('s');
+    String s = await actualizarHistorial(
+        globals.usuario!.id.toString(), h.historialToJson(his));
     Navigator.pop(context);
     Navigator.pop(context);
-    print('5');
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Widget _listadoHistorias() {
@@ -1570,81 +1539,203 @@ class _PetDetailState extends State<PetDetails> {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              print('presiono historial $index');
-              // Navigator.of(context)
-              //     .pushNamed('/PetDetails',
-              //     arguments: MascotaSeleccionada(
-              //         mascotas: mascotas,
-              //         historial: historial,
-              //         fotos: fotos,
-              //         seleccionado: index))
-              //     .then((value) => setState(() {}));
+              _historiaSeleccionada(context, historial.items![index]);
             },
-            child:
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            color: Colors.white,
-                            constraints: BoxConstraints(
-                              minHeight: 30,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          color: Colors.white,
+                          constraints: BoxConstraints(
+                            minHeight: 30,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              historial.items![index].tipo.toString(),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
                             ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(historial.items![index].tipo.toString(),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold
-                                  ),),
-                              ),
                           ),
                         ),
-                        Flexible(
-                          child: Container(
-                            color: Colors.white,
-                            constraints: BoxConstraints(
-                              minHeight: 30,
-                            ),
-                            child: Padding(
+                      ),
+                      Flexible(
+                        child: Container(
+                          color: Colors.white,
+                          constraints: BoxConstraints(
+                            minHeight: 30,
+                          ),
+                          child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: _fecha(historial.items![index].fecha.toString())
-                            ),
-                          ),
+                              child: _fecha(
+                                  historial.items![index].fecha.toString())),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Divider()
-                ],
-              ),
+                ),
+                Divider()
+              ],
+            ),
           );
         },
       ),
     );
   }
 
-  Widget _fecha(String fecha){
+  Widget _fecha(String fecha) {
     DateTime date = DateTime.parse(fecha);
-    return Text(date.day.toString()+' / '+date.month.toString()+' / '+ date.year.toString(),
-      style: TextStyle(
-        color: Colors.black54
-    ),);
+    return Text(
+      date.day.toString() +
+          ' / ' +
+          date.month.toString() +
+          ' / ' +
+          date.year.toString(),
+      style: TextStyle(color: Colors.black54),
+    );
   }
 
   h.Historial _juntarHistorial(h.Historial hist, int index) {
     h.Historial his = h.Historial(items: []);
     hist.items!.forEach((element) {
-      if(element.idMascota == mascotas.items[index].id){
+      if (element.idMascota == mascotas.items[index].id) {
         his.items!.add(element);
       }
     });
     return his;
   }
 
+  void _historiaSeleccionada(BuildContext context, h.Item historia) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Tipo:'),
+                SizedBox(
+                  height: 15,
+                ),
+                Text(historia.tipo.toString()),
+                SizedBox(
+                  height: 15,
+                ),
+                Text('Fecha:'),
+                SizedBox(
+                  height: 15,
+                ),
+                _fecha(historia.fecha.toString()),
+                SizedBox(
+                  height: 15,
+                ),
+                historia.peso.toString() != '' ? Text('Peso:') : Text(''),
+                historia.peso.toString() != ''
+                    ? SizedBox(
+                        height: 15,
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                historia.peso.toString() != ''
+                    ? Text(historia.peso.toString())
+                    : SizedBox(
+                        height: 0,
+                      ),
+                historia.peso.toString() != ''
+                    ? SizedBox(
+                        height: 15,
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                Text('Revision:'),
+                SizedBox(
+                  height: 15,
+                ),
+                _fecha(historia.proximaFecha.toString()),
+                SizedBox(
+                  height: 15,
+                ),
+                historia.lugar.toString() != '' ? Text('Lugar:') : Text(''),
+                historia.lugar.toString() != ''
+                    ? SizedBox(
+                        height: 15,
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                historia.lugar.toString() != ''
+                    ? Text(historia.lugar.toString())
+                    : SizedBox(
+                        height: 0,
+                      ),
+                historia.lugar.toString() != ''
+                    ? SizedBox(
+                        height: 15,
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                Text('Medicacion:'),
+                SizedBox(
+                  height: 15,
+                ),
+                Text(historia.medicamento.toString()),
+                SizedBox(
+                  height: 15,
+                ),
+                Text('Observaciones:'),
+                SizedBox(
+                  height: 15,
+                ),
+                historia.observaciones.toString() != ''
+                    ? Text(historia.observaciones.toString())
+                    : Text('-'),
+                SizedBox(
+                  height: 15,
+                ),
+                ButtonBar(
+                  children: [
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _eliminarHistoria(context, historia);
+                      },
+                      child: Text('Eliminar'),
+                      color: Colors.red,
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Aceptar'),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ));
+        });
+  }
+
+  void _eliminarHistoria(BuildContext context, h.Item historia) async {
+    h.Historial his = widget.argumentos.historial;
+    his.items!.remove(historia);
+    //cargando(context, 'Eliminando historia');
+    String s = await actualizarHistorial(
+        globals.usuario!.id.toString(), h.historialToJson(his));
+    setState(() {
+      //Navigator.pop(context);
+    });
+  }
 }

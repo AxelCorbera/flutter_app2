@@ -101,7 +101,7 @@ class _CartState extends State<Cart> {
             children: <Widget>[
               RaisedButton.icon(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).pushNamed('/InfoPayment');
                   },
                   icon: Icon(Icons.navigate_next),
                   label: Text("Finalizar compra"))
