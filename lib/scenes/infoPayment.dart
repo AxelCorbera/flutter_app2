@@ -32,7 +32,23 @@ class _InfoPaymentState extends State<InfoPayment> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('Domicilio:'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Domicilio:'),
+                      SizedBox(
+                        width: 25,
+                      ),
+                      domicilio != ''
+                          ? Icon(
+                              Icons.done,
+                              color: Colors.green,
+                            )
+                          : SizedBox(
+                              width: 0,
+                            )
+                    ],
+                  ),
                   RaisedButton(
                     onPressed: () {
                       _direccion(context, '', '', '', '');
@@ -64,28 +80,28 @@ class _InfoPaymentState extends State<InfoPayment> {
                           onPressed: () {
                             efectivo = true;
                             tarjeta = false;
-                            setState(() {
-
-                            });
+                            setState(() {});
                           },
                           child: Text('Efectivo'),
-                          color: efectivo?Colors.green:null,
+                          color: efectivo ? Colors.green : null,
                         ),
                         RaisedButton(
                           onPressed: () {
                             efectivo = false;
                             tarjeta = true;
-                            setState(() {
-
-                            });
+                            setState(() {});
                           },
                           child: Text('Tarjeta credito/debito'),
-                          color: tarjeta?Colors.green:null,
+                          color: tarjeta ? Colors.green : null,
                         ),
                       ],
                     ),
                   ),
-                  tarjeta?Text('Visa terminada en XXXX'):efectivo?Text('Pago en efectivo'):Text('Seleccionar forma de pago')
+                  tarjeta
+                      ? Text('Visa terminada en XXXX')
+                      : efectivo
+                          ? Text('Pago en efectivo')
+                          : Text('Seleccionar forma de pago')
                 ],
               ),
             ),
@@ -104,9 +120,12 @@ class _InfoPaymentState extends State<InfoPayment> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed:
+                      domicilio != '' && efectivo == true || domicilio != '' && tarjeta == true
+                          ? () {
+                              Navigator.pop(context);
+                            }
+                          : null,
                   icon: Icon(Icons.navigate_next),
                   label: Text("Continuar"))
             ],
@@ -253,12 +272,9 @@ class _InfoPaymentState extends State<InfoPayment> {
                             ),
                             RaisedButton(
                               onPressed: () {
-                                domicilio =
-                                    '$calle, $loc, $muni';
+                                domicilio = '$calle, $loc, $muni';
                                 Navigator.pop(context);
-                                setState(() {
-
-                                });
+                                setState(() {});
                               },
                               child: Text('Aceptar'),
                             ),
