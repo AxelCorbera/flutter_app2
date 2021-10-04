@@ -3,6 +3,7 @@ import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/addPet.dart';
 import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/category.dart';
+import 'package:flutter_app2/scenes/checkout.dart';
 import 'package:flutter_app2/scenes/infoPayment.dart';
 import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scenes/petDetails.dart';
@@ -75,16 +76,29 @@ class MyApp extends StatelessWidget {
               return Pets();
             case "/PetDetails":
               final args = settings.arguments as MascotaSeleccionada;
-              return PetDetails(argumentos: args,);
+              return PetDetails(
+                argumentos: args,
+              );
             case "/AddPet":
               final args = settings.arguments as AgregarMascotas;
-              return AddPet(datos: args,);
+              return AddPet(
+                datos: args,
+              );
             case "/Support":
               return Support();
             case "/Cards":
               return Cards();
             case "/AddCard":
-              return AddCard();
+              print(settings.arguments.toString());
+              final arg = settings.arguments as ArgumentsAddaCard;
+              return AddCard(pago: arg.pago, total: arg.total);
+            case "/Checkout":
+              final args = settings.arguments as ArgumentosCheckout;
+              return Checkout(
+                  tarjeta: args.tarjeta,
+                  total: args.total,
+                  domicilio: args.domicilio,
+                  cuota: args.cuotas);
             default:
               return Login();
           }

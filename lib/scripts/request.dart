@@ -6,6 +6,8 @@ import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
 import 'package:flutter_app2/scripts/mercadopago/json/crearCustomerJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/historial.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/mascotas.dart';
+import 'package:flutter_app2/scripts/mercadopago/payment.dart';
+import 'package:flutter_app2/scripts/mercadopago/responsePayment.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart' as request;
@@ -660,6 +662,30 @@ Future<CreateCustomer> CrearCustomer(Datos customerDatos) async {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
     throw Exception('Fallo la creacion de customer.');
+  }
+}
+
+Future<ResponsePayment> CrearPago(Payment payment) async {
+//print(globals.accessToken);
+  final response = await http.post(
+    Uri.parse('https://api.mercadopago.com/v1/payments?'),
+    headers: <String, String>{
+      'Authorization': 'Bearer '+globals.accessToken,
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: jsonEncode(payment),
+  );
+  print(response.statusCode);
+  print(response.body);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+
+    //print(response.body);
+
+    return ResponsePayment.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Fallo la creacion del pago.');
   }
 }
 

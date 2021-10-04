@@ -100,9 +100,9 @@ class _CartState extends State<Cart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton.icon(
-                  onPressed: () {
+                  onPressed: total>0?() {
                     Navigator.of(context).pushNamed('/InfoPayment');
-                  },
+                  }:null,
                   icon: Icon(Icons.navigate_next),
                   label: Text("Finalizar compra"))
             ],

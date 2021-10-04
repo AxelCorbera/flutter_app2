@@ -183,7 +183,7 @@ class _CardsState extends State<Cards> {
                     itemBuilder: (context, index) {
                       return InkWell(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/AddCard');
+                            Navigator.of(context).pushNamed('/AddCard', arguments: ArgumentsAddaCard(false,1000));
                           },
                           child: Hero(
                               tag: '',
@@ -243,7 +243,7 @@ class _CardsState extends State<Cards> {
           FlatButton.icon(
             onPressed: () {
               Navigator.of(context)
-                  .pushNamed('/AddCard')
+                  .pushNamed('/AddCard', arguments: ArgumentsAddaCard(false,1000))
                   .then((value) => setState(() {}));
             },
             icon: Icon(
@@ -377,8 +377,8 @@ class _CardsState extends State<Cards> {
           itemBuilder: (context, index) {
             return InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/AddCard')
-                      .then((value) => setState(() {busqueda=true;}));;
+                  Navigator.of(context).pushNamed('/AddCard', arguments: ArgumentsAddaCard(false,1000))
+                      .then((value) => setState(() {busqueda=true;}));
                 },
                 child: Hero(
                     tag: '',
@@ -556,3 +556,8 @@ class _CardsState extends State<Cards> {
     return "";
   }
 }
+ class ArgumentsAddaCard{
+  final bool pago;
+  final double total;
+  ArgumentsAddaCard(this.pago, this.total);
+ }

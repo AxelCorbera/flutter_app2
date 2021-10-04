@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:flutter_app2/scenes/addcard.dart' as addcard;
+import 'package:flutter_app2/scenes/checkout.dart';
 import 'package:flutter_app2/scenes/components/direccion.dart';
+import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart';
+import 'package:flutter_app2/scripts/mercadopago/mercadoPago.dart';
+
+import 'cards.dart';
 
 class InfoPayment extends StatefulWidget {
   @override
@@ -10,10 +16,14 @@ class InfoPayment extends StatefulWidget {
 class _InfoPaymentState extends State<InfoPayment> {
   bool efectivo = false;
   bool tarjeta = false;
+  bool cuotas = false;
   double total = 0;
-  String domicilio = '';
+  String cuotaSeleccionada = '';
+  Domicilio domicilio = new Domicilio('', '', '', '', 0, '', '');
   Direcciones dir = new Direcciones();
-
+  addcard.TarjetaPago tarjetaSeleccionada =
+      new addcard.TarjetaPago(DatosTarjeta(), Cuotas());
+  GlobalKey<FormState> _keyForm = GlobalKey();
   Widget build(BuildContext context) {
     total = Sumar(globals.carrito.precio, globals.carrito.cantidad);
     return Scaffold(
@@ -39,7 +49,7 @@ class _InfoPaymentState extends State<InfoPayment> {
                       SizedBox(
                         width: 25,
                       ),
-                      domicilio != ''
+                      domicilio.calle != ''
                           ? Icon(
                               Icons.done,
                               color: Colors.green,
@@ -55,7 +65,12 @@ class _InfoPaymentState extends State<InfoPayment> {
                     },
                     child: Text('Seleccionar domicilio'),
                   ),
-                  Text(domicilio),
+                  domicilio.calle!=''?
+                  Text(domicilio.calle+' '+
+                      domicilio.numero.toString()+', '+
+                      domicilio.localidad+' '+
+                      domicilio.municipio
+                      ):SizedBox(),
                 ],
               ),
             ),
@@ -71,7 +86,23 @@ class _InfoPaymentState extends State<InfoPayment> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('Forma de pago:'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Forma de pago:'),
+                      SizedBox(
+                        width: 25,
+                      ),
+                      efectivo || tarjeta
+                          ? Icon(
+                              Icons.done,
+                              color: Colors.green,
+                            )
+                          : SizedBox(
+                              width: 0,
+                            )
+                    ],
+                  ),
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -80,6 +111,9 @@ class _InfoPaymentState extends State<InfoPayment> {
                           onPressed: () {
                             efectivo = true;
                             tarjeta = false;
+                            cuotas = false;
+                            tarjetaSeleccionada = new addcard.TarjetaPago(
+                                DatosTarjeta(), Cuotas());
                             setState(() {});
                           },
                           child: Text('Efectivo'),
@@ -87,9 +121,10 @@ class _InfoPaymentState extends State<InfoPayment> {
                         ),
                         RaisedButton(
                           onPressed: () {
-                            efectivo = false;
-                            tarjeta = true;
-                            setState(() {});
+                            //efectivo = false;
+                            //tarjeta = true;
+                            //setState(() {});
+                            _mostrarTarjetas();
                           },
                           child: Text('Tarjeta credito/debito'),
                           color: tarjeta ? Colors.green : null,
@@ -98,7 +133,12 @@ class _InfoPaymentState extends State<InfoPayment> {
                     ),
                   ),
                   tarjeta
-                      ? Text('Visa terminada en XXXX')
+                      ? Text(tarjetaSeleccionada.cuotasTarj.paymentMethodId
+                              .toString() +
+                          " terminada en " +
+                          tarjetaSeleccionada.datosTarj.numeros
+                              .toString()
+                              .substring(12, 16))
                       : efectivo
                           ? Text('Pago en efectivo')
                           : Text('Seleccionar forma de pago')
@@ -107,6 +147,70 @@ class _InfoPaymentState extends State<InfoPayment> {
             ),
           ),
         ),
+        tarjetaSeleccionada.datosTarj.numeros != null
+            ? Center(
+                child: Card(
+                  elevation: 5,
+                  margin: EdgeInsets.all(10),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Cuotas:'),
+                            SizedBox(
+                              width: 25,
+                            ),
+                            cuotas
+                                ? Icon(
+                                    Icons.done,
+                                    color: Colors.green,
+                                  )
+                                : SizedBox(
+                                    width: 0,
+                                  )
+                          ],
+                        ),
+                        Form(
+                          child: Container(
+                            width: 250,
+                            child: DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {},
+                              onChanged: (value) {
+                                  cuotas = true;
+                                  cuotaSeleccionada = value.toString().substring(0,2);
+                                  cuotaSeleccionada = cuotaSeleccionada.replaceAll(' ', '');
+                                  print('cuotas $cuotaSeleccionada<');
+                                  setState(() {
+
+                                  });
+                              },
+                              hint: Text(
+                                'Seleccionar cuotas',
+                              ),
+                              isExpanded: true,
+                              items: _cuotas().map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox(),
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: Text(
@@ -120,12 +224,16 @@ class _InfoPaymentState extends State<InfoPayment> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton.icon(
-                  onPressed:
-                      domicilio != '' && efectivo == true || domicilio != '' && tarjeta == true
-                          ? () {
-                              Navigator.pop(context);
-                            }
-                          : null,
+                  onPressed: domicilio != '' && efectivo == true ||
+                          domicilio != '' && tarjeta == true && cuotas == true
+                      ? () {
+                    String number = total.toStringAsFixed(2);
+                    total = double.parse(number);
+                          Navigator.of(context).pushNamed('/Checkout',
+                              arguments: ArgumentosCheckout(
+                                  tarjetaSeleccionada, total, domicilio, cuotaSeleccionada));
+                        }
+                      : null,
                   icon: Icon(Icons.navigate_next),
                   label: Text("Continuar"))
             ],
@@ -144,6 +252,8 @@ class _InfoPaymentState extends State<InfoPayment> {
           return AlertDialog(
               content: SingleChildScrollView(
             child: Form(
+              key: loc != ''
+                  ? _keyForm:null,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,18 +359,65 @@ class _InfoPaymentState extends State<InfoPayment> {
                   loc != ''
                       ? TextFormField(
                           initialValue: dire != '' ? dire : null,
-                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            labelText: "Direccion: ",
+                            labelText: "Calle: ",
                           ),
                           onSaved: (value) {},
                           onChanged: (value) {
-                            calle = value.toString().toUpperCase();
+                            domicilio.calle = value.toString().toUpperCase();
                           },
+                    validator: (value){
+                            if(value.toString().isEmpty)
+                              return 'Este campo es obligatorio';
+                    },
                         )
                       : SizedBox(
                           height: 0,
                         ),
+                  loc != ''
+                      ? TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Nro.: ",
+                    ),
+                    onSaved: (value) {},
+                    onChanged: (value) {
+                      domicilio.numero = int.parse(value);
+                    },
+                    validator: (value){
+                      if(value.toString().isEmpty)
+                        return 'Este campo es obligatorio';
+                    },
+                  )
+                      : SizedBox(
+                    height: 0,
+                  ),
+                  loc != ''
+                      ? TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Piso: ",
+                    ),
+                    onSaved: (value) {},
+                    onChanged: (value) {
+                      domicilio.piso = value.toString().toUpperCase();
+                    },
+                  )
+                      : SizedBox(
+                    height: 0,
+                  ),
+                  loc != ''
+                      ? TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Departamento: ",
+                    ),
+                    onSaved: (value) {},
+                    onChanged: (value) {
+                      domicilio.departamento = value.toString().toUpperCase();
+                    },
+                  )
+                      : SizedBox(
+                    height: 0,
+                  ),
                   loc != ''
                       ? ButtonBar(
                           children: [
@@ -272,9 +429,20 @@ class _InfoPaymentState extends State<InfoPayment> {
                             ),
                             RaisedButton(
                               onPressed: () {
-                                domicilio = '$calle, $loc, $muni';
-                                Navigator.pop(context);
-                                setState(() {});
+                                if(_keyForm.currentState!.validate()) {
+                                  domicilio.provincia = prov;
+                                  domicilio.municipio = muni;
+                                  domicilio.localidad = loc;
+                                  Navigator.pop(context);
+                                  print(domicilio.calle+
+                                  domicilio.numero.toString()+
+                                  domicilio.piso+
+                                  domicilio.departamento+
+                                  domicilio.localidad+
+                                  domicilio.municipio+
+                                  domicilio.provincia);
+                                  setState(() {});
+                                }
                               },
                               child: Text('Aceptar'),
                             ),
@@ -290,6 +458,111 @@ class _InfoPaymentState extends State<InfoPayment> {
         });
   }
 
+  void _mostrarTarjetas() {
+    String calle = '';
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: SingleChildScrollView(
+            child: Form(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  globals.cards.length > 0
+                      ? Column(
+                          children: [
+                            DropdownButtonFormField(
+                              onTap: () {},
+                              onSaved: (value) {},
+                              onChanged: (value) {
+                                Navigator.pop(context);
+                                _direccion(
+                                    context, value.toString(), '', '', '');
+                              },
+                              hint: Text(
+                                'Elegir tarjeta',
+                              ),
+                              isExpanded: true,
+                              items: _tarjetas().map((String val) {
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    val,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            RaisedButton(
+                              onPressed: () {},
+                              child: Text('Aceptar'),
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancelar'),
+                            )
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Center(
+                                child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text('No hay tarjetas guardadas'),
+                            )),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RaisedButton(
+                                onPressed: () async {
+                                  // Navigator.of(context).pushNamed('/AddCard', arguments: ArgumentsAddaCard(true)).
+                                  // then((value) => setState((){}));
+
+                                  tarjetaSeleccionada = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => addcard.AddCard(
+                                            pago: true, total: total)),
+                                  );
+                                  //Navigator.pop(context);
+                                  setState(() {
+                                    Navigator.pop(context);
+                                    cuotas = false;
+                                    tarjeta = true;
+                                    efectivo = false;
+                                  });
+                                },
+                                child: Text('Nueva tarjeta'),
+                                color: Colors.green[300],
+                              ),
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancelar'),
+                            )
+                          ],
+                        ),
+                ],
+              ),
+            ),
+          ));
+        });
+  }
+
+  List<String> _tarjetas() {
+    List<String> t = [];
+    for (int i = 0; i < globals.cards.length; i++) {
+      t.add(globals.cards[i].paymentMethod.toString() +
+          " terminada en " +
+          globals.cards[i].lastFourDigits.toString());
+    }
+    return t;
+  }
+
   dynamic Sumar(List<dynamic> lista, List<String> lista2) {
     double total = 0;
     lista.forEach((p) {
@@ -299,4 +572,37 @@ class _InfoPaymentState extends State<InfoPayment> {
     });
     return total;
   }
+
+  List<String> _cuotas() {
+    List<String> c = [];
+    for (int i = 0;
+        i < tarjetaSeleccionada.cuotasTarj.payerCosts!.length;
+        i++) {
+      String s = tarjetaSeleccionada.cuotasTarj.payerCosts![i].installments
+              .toString() +
+          ' cuotas de ' +
+          tarjetaSeleccionada.cuotasTarj.payerCosts![i].installmentAmount
+              .toString();
+      c.add(s);
+    }
+    return c;
+  }
+}
+
+class Domicilio{
+  String provincia;
+  String municipio;
+  String localidad;
+  String calle;
+  int numero;
+  String piso;
+  String departamento;
+
+  Domicilio(this.provincia,
+      this.municipio,
+      this.localidad,
+      this.calle,
+      this.numero,
+      this.piso,
+      this.departamento);
 }

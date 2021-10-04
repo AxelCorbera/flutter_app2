@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter_app2/scenes/checkout.dart';
+
 Payment paymentFromJson(String str) => Payment.fromJson(json.decode(str));
 
 String paymentToJson(Payment data) => json.encode(data.toJson());
@@ -22,6 +24,11 @@ class Payment {
   });
 
   AdditionalInfo? additionalInfo;
+  int? application_fee;
+  bool? binary_mode;
+
+  /////QUEDE ACAAAAAA!!!
+
   String? description;
   String? externalReference;
   int? installments;
@@ -58,22 +65,24 @@ class Payment {
 
 class AdditionalInfo {
   AdditionalInfo({
+    this.ip_adress,
     this.items,
     this.payer,
     this.shipments,
     this.barcode,
   });
-
+  String? ip_adress;
   List<Item>? items;
   AdditionalInfoPayer? payer;
   Shipments? shipments;
-  Metadata? barcode;
+  Barcode? barcode;
 
   factory AdditionalInfo.fromJson(Map<String, dynamic> json) => AdditionalInfo(
+    ip_adress: json["ip_adress"],
     items: List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
     payer: AdditionalInfoPayer.fromJson(json["payer"]),
     shipments: Shipments.fromJson(json["shipments"]),
-    barcode: Metadata.fromJson(json["barcode"]),
+    barcode: Barcode.fromJson(json["barcode"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -81,6 +90,28 @@ class AdditionalInfo {
     "payer": payer!.toJson(),
     "shipments": shipments!.toJson(),
     "barcode": barcode!.toJson(),
+  };
+}
+
+class Barcode {
+  Barcode(this.type,
+      this.content,
+      this.width,
+      this.height);
+
+  String? type;
+  String? content;
+  int? width;
+  int? height;
+
+  factory Barcode.fromJson(Map<String, dynamic> json) => Barcode(
+      json['type'],
+      json['content'],
+      json['width'],
+      json['height']);
+
+  Map<String, dynamic> toJson() => {
+    "type":type,
   };
 }
 
@@ -140,18 +171,21 @@ class AdditionalInfoPayer {
     this.lastName,
     this.phone,
     this.address,
+    this.registration_date,
   });
 
   String? firstName;
   String? lastName;
   Phone? phone;
   Metadata? address;
+  String? registration_date;
 
   factory AdditionalInfoPayer.fromJson(Map<String, dynamic> json) => AdditionalInfoPayer(
     firstName: json["first_name"],
     lastName: json["last_name"],
     phone: Phone.fromJson(json["phone"]),
     address: Metadata.fromJson(json["address"]),
+    registration_date: json["registration_date"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -159,6 +193,26 @@ class AdditionalInfoPayer {
     "last_name": lastName,
     "phone": phone!.toJson(),
     "address": address!.toJson(),
+    "registration_date": registration_date,
+  };
+}
+
+class Address {
+  String? zip_code;
+  String? street_name;
+  int? street_number;
+
+  Address(this.zip_code,this.street_name,this.street_number);
+
+  factory Address.fromJson(Map<String, dynamic> json) => Address(
+      json['zip_code'],
+      json['street_name'],
+      json['street_number']);
+
+  Map<String, dynamic> toJson() => {
+    "zip_code":zip_code,
+    "street_name":street_name,
+    "street_number":street_number
   };
 }
 
@@ -205,6 +259,8 @@ class ReceiverAddress {
     this.cityName,
     this.streetName,
     this.streetNumber,
+    this.floor,
+    this.apartament
   });
 
   String? zipCode;
@@ -212,6 +268,8 @@ class ReceiverAddress {
   String? cityName;
   String? streetName;
   int? streetNumber;
+  String? floor;
+  String? apartament;
 
   factory ReceiverAddress.fromJson(Map<String, dynamic> json) => ReceiverAddress(
     zipCode: json["zip_code"],
@@ -219,6 +277,8 @@ class ReceiverAddress {
     cityName: json["city_name"],
     streetName: json["street_name"],
     streetNumber: json["street_number"],
+    floor: json["floor"],
+    apartament: json["apartament"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -227,22 +287,28 @@ class ReceiverAddress {
     "city_name": cityName,
     "street_name": streetName,
     "street_number": streetNumber,
+    "floor": floor,
+    "apartament": apartament,
   };
 }
 
 class Order {
   Order({
     this.type,
+    this.id
   });
 
   String? type;
+  int? id;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
     type: json["type"],
+    id: json["id"],
   );
 
   Map<String, dynamic> toJson() => {
     "type": type,
+    "id": id,
   };
 }
 

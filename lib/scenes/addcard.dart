@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 
 class AddCard extends StatefulWidget {
+  const AddCard({Key? key, required this.pago, required this.total}) : super(key: key);
+  final bool pago;
+  final double total;
   @override
   _AddCardState createState() => _AddCardState();
 }
@@ -57,7 +60,8 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     return Scaffold(
       key: _keyScaf,
       appBar: AppBar(
-        title: Text('Agregar tarjeta - Paso ' + (fase+1).toString() + '/3'),
+        title: widget.pago?Text('Nueva tarjeta - Paso ' + (fase+1).toString() + '/3'):
+        Text('Agregar tarjeta - Paso ' + (fase+1).toString() + '/3'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
@@ -116,7 +120,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
               if(_textFieldControllerNumber.value.text.length==7 &&
                   _textFieldControllerNumber.value.text.length > caracteres)
               {
-                cuotas = await request.Cuotas(_textFieldControllerNumber.value.text.replaceAll(" ", ""), "1000");
+                cuotas = await request.Cuotas(_textFieldControllerNumber.value.text.replaceAll(" ", ""), widget.total.toString());
                 _MetodoPago(cuotas.paymentMethodId as String);
               }
 
@@ -533,15 +537,25 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
               ),
               RaisedButton(
                 onPressed: () {
+                  print('volver');
                   if(globals.usuario!.idcustomer != "") {
+                    widget.pago?
+                    _pagoTarjeta():
                     _agregarTarjeta();
                   }else{
                     _crearCustomer();
+                    widget.pago?
+                    _pagoTarjeta():
                     _agregarTarjeta();
                   }
                 },
                 color: Theme.of(context).primaryColor,
-                child: Text(
+                child: widget.pago?Text(
+                  "Aceptar",
+                  style: TextStyle(
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+                ):Text(
                   "Agregar",
                   style: TextStyle(
                     color: Theme.of(context).secondaryHeaderColor,
@@ -615,7 +629,22 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     );
   }
 
+  void _pagoTarjeta(){
+    print('volviendo al pago..');
+    DatosTarjeta datos = new DatosTarjeta();
+    datos.numeros = _textFieldControllerNumber.value.text.replaceAll(" ", "");
+    datos.nombre = _textFieldControllerName.value.text.toUpperCase();
+    datos.mes = _textFieldControllerExpire.value.text.toString().substring(0,2);
+    datos.ano = _textFieldControllerExpire.value.text.toString().substring(3,5);
+    datos.docTipo = "DNI";
+    datos.docNum = _textFieldControllerDocument.value.text.replaceAll(".", "");
+    datos.cvv = _textFieldControllerSecCode.value.text;
+    TarjetaPago t = new TarjetaPago(datos, cuotas);
+    Navigator.pop(context, t);
+  }
+
   void _agregarTarjeta() async{
+    print('agregando tarjeta');
     DatosTarjeta datos = new DatosTarjeta();
     datos.numeros = _textFieldControllerNumber.value.text.replaceAll(" ", "");
     datos.nombre = _textFieldControllerName.value.text.toUpperCase();
@@ -722,4 +751,10 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
         return;
     }
   }
+}
+
+class TarjetaPago{
+  final DatosTarjeta datosTarj;
+  final Cuotas cuotasTarj;
+  TarjetaPago(this.datosTarj, this.cuotasTarj);
 }
