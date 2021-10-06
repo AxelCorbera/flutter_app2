@@ -629,7 +629,19 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _pagoTarjeta(){
+  void _cargando() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(content: Center(
+            child: CircularProgressIndicator(
+
+            ),
+          ));
+        });
+  }
+
+  void _pagoTarjeta()async{
     print('volviendo al pago..');
     DatosTarjeta datos = new DatosTarjeta();
     datos.numeros = _textFieldControllerNumber.value.text.replaceAll(" ", "");
@@ -639,7 +651,22 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     datos.docTipo = "DNI";
     datos.docNum = _textFieldControllerDocument.value.text.replaceAll(".", "");
     datos.cvv = _textFieldControllerSecCode.value.text;
-    TarjetaPago t = new TarjetaPago(datos, cuotas);
+
+    _cargando();
+
+    String token = await CardToken(datos);
+    final respuesta = await GuardarTarjeta(token);
+    print("respuesta a guardar tarjeta > " + respuesta.toString());
+
+    if(respuesta.toString()!="0"){
+      _mostrarMensaje("La tarjeta se guardo correctamente!");
+      Navigator.pop(context);
+    }else{
+      _mostrarMensaje("Ocurrio un error. Vuelva a intentar.");
+      Navigator.pop(context);
+    }
+
+    TarjetaPago t = new TarjetaPago(datos, token, cuotas);
     Navigator.pop(context, t);
   }
 
@@ -655,6 +682,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     datos.cvv = _textFieldControllerSecCode.value.text;
 
     String token = await CardToken(datos);
+    print("token > " + token);
     final respuesta = await GuardarTarjeta(token);
     print("respuesta a guardar tarjeta > " + respuesta.toString());
 
@@ -755,6 +783,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
 
 class TarjetaPago{
   final DatosTarjeta datosTarj;
+  final idTarjeta;
   final Cuotas cuotasTarj;
-  TarjetaPago(this.datosTarj, this.cuotasTarj);
+  TarjetaPago(this.datosTarj, this.idTarjeta, this.cuotasTarj);
 }

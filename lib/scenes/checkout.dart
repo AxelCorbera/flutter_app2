@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scenes/addcard.dart';
 import 'package:flutter_app2/scenes/infoPayment.dart';
+import 'package:flutter_app2/scripts/mercadopago/json/cardsJson.dart' as card;
 import 'package:flutter_app2/scripts/mercadopago/payment.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/mercadopago/responsePayment.dart' as response;
@@ -288,13 +289,14 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void _pagar() async{
-    Map map = Map<String,String>();
+    print(widget.tarjeta.idTarjeta);
+
     Payment pago = new Payment();
     pago.additionalInfo = AdditionalInfo();
     pago.additionalInfo!.items = [];
     Item item = new Item(id: 'PR0001',
     title: 'Moritas PetShop',
-    pictureUrl: '',
+    //pictureUrl: '',
     categoryId: 'Pets',
     quantity: 1,
     unitPrice: widget.total);
@@ -305,7 +307,7 @@ class _CheckoutState extends State<Checkout> {
     pago.additionalInfo!.payer!.phone = new Phone();
     pago.additionalInfo!.payer!.phone!.areaCode = 11;
     pago.additionalInfo!.payer!.phone!.number = telefono;
-    pago.additionalInfo!.payer!.address = new Metadata();
+    pago.additionalInfo!.payer!.address = new Address();
     pago.additionalInfo!.shipments = new Shipments();
     pago.additionalInfo!.shipments!.receiverAddress = new ReceiverAddress();
     pago.additionalInfo!.shipments!.receiverAddress!.zipCode = '';
@@ -313,33 +315,60 @@ class _CheckoutState extends State<Checkout> {
     pago.additionalInfo!.shipments!.receiverAddress!.cityName = widget.domicilio.localidad;
     pago.additionalInfo!.shipments!.receiverAddress!.streetName = widget.domicilio.calle;
     pago.additionalInfo!.shipments!.receiverAddress!.streetNumber = widget.domicilio.numero;
-    //pago.additionalInfo!.barcode = Barcode();
-    //pago.description = 'Pago por productos';
-    pago.externalReference = 'MORITASHOP01';
+    pago.additionalInfo!.shipments!.receiverAddress!.floor = widget.domicilio.piso;
+    pago.additionalInfo!.shipments!.receiverAddress!.apartment = widget.domicilio.departamento;
+    // pago.additionalInfo!.barcode = new Barcode();
+    // pago.additionalInfo!.barcode!.content = '';
+    // pago.additionalInfo!.barcode!.type = '';
+    // pago.additionalInfo!.barcode!.width = 0;
+    // pago.additionalInfo!.barcode!.height = 0;
+    pago.application_fee = 1;
+    pago.binary_mode = false;
+    //pago.callback_url = 'https://app-till.com/index.php/contact/';
+    pago.campaign_id = 0;
+    pago.capture = true;
+    //pago.coupon_amount = 10;
+    //pago.coupon_code = '';
+    //pago.date_of_expiration = '2021-07-10T14:47:58.000Z';
+    pago.description = 'Pago por productos';
+    pago.differential_pricing_id = 0;
+    pago.externalReference = 'Moritas Petshop';
     pago.installments = int.parse(widget.cuota);
+    //pago.issuer_id = null;
     pago.metadata = new Metadata();
+    //pago.notification_url = 'https://app-till.com/index.php/contact/';
     pago.order = new Order();
     pago.order!.type = 'mercadopago';
     pago.order!.id = 1;
     pago.payer = PaymentPayer();
     pago.payer!.entityType = 'individual';
     pago.payer!.type = 'customer';
-    pago.payer!.identification = new Metadata();
+    pago.payer!.id = globals.usuario!.idcustomer;
+    pago.payer!.email = globals.usuario!.correo;
+    pago.payer!.identification = new Identification();
+    pago.payer!.identification!.type = widget.tarjeta.datosTarj.docTipo;
+    pago.payer!.identification!.number = widget.tarjeta.datosTarj.docNum;
+    pago.payer!.first_name = globals.usuario!.nombre;
+    pago.payer!.last_name = globals.usuario!.apellido;
     pago.paymentMethodId = widget.tarjeta.cuotasTarj.paymentMethodId;
+    pago.statement_descriptor = 'Moritas Petshop';
+    pago.token = widget.tarjeta.idTarjeta;
     pago.transactionAmount = widget.total;
 
     _cargando();
 
-    response.ResponsePayment resp = await request.CrearPago(pago);
+    try {
+      response.ResponsePayment resp = await request.CrearPago(pago);
+      print(resp);
+      Navigator.pop(context);
+    }catch(Exception){
+      print(Exception);
+      Navigator.pop(context);
+    }
 
-    print(resp);
-
-    Navigator.pop(context);
   }
 }
-class Barcode{
-Barcode();
-}
+
 
 class ArgumentosCheckout {
   final TarjetaPago tarjeta;

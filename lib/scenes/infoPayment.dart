@@ -22,7 +22,7 @@ class _InfoPaymentState extends State<InfoPayment> {
   Domicilio domicilio = new Domicilio('', '', '', '', 0, '', '');
   Direcciones dir = new Direcciones();
   addcard.TarjetaPago tarjetaSeleccionada =
-      new addcard.TarjetaPago(DatosTarjeta(), Cuotas());
+      new addcard.TarjetaPago(DatosTarjeta(),'', Cuotas());
   GlobalKey<FormState> _keyForm = GlobalKey();
   Widget build(BuildContext context) {
     total = Sumar(globals.carrito.precio, globals.carrito.cantidad);
@@ -92,7 +92,11 @@ class _InfoPaymentState extends State<InfoPayment> {
                       Text('Forma de pago:'),
                       SizedBox(
                         width: 25,
-                      ),
+                      ),tarjetaSeleccionada.idTarjeta == '0'?
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                      ):
                       efectivo || tarjeta
                           ? Icon(
                               Icons.done,
@@ -113,7 +117,7 @@ class _InfoPaymentState extends State<InfoPayment> {
                             tarjeta = false;
                             cuotas = false;
                             tarjetaSeleccionada = new addcard.TarjetaPago(
-                                DatosTarjeta(), Cuotas());
+                                DatosTarjeta(),'', Cuotas());
                             setState(() {});
                           },
                           child: Text('Efectivo'),
@@ -132,6 +136,11 @@ class _InfoPaymentState extends State<InfoPayment> {
                       ],
                     ),
                   ),
+                  tarjetaSeleccionada.idTarjeta == '0'?
+                  Text("Ocurrio un error.",
+                  style: TextStyle(
+                    color: Colors.red
+                  ),):
                   tarjeta
                       ? Text(tarjetaSeleccionada.cuotasTarj.paymentMethodId
                               .toString() +
@@ -147,7 +156,8 @@ class _InfoPaymentState extends State<InfoPayment> {
             ),
           ),
         ),
-        tarjetaSeleccionada.datosTarj.numeros != null
+        tarjetaSeleccionada.datosTarj.numeros != null &&
+            tarjetaSeleccionada.idTarjeta != '0'
             ? Center(
                 child: Card(
                   elevation: 5,
