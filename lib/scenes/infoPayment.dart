@@ -545,7 +545,7 @@ class _InfoPaymentState extends State<InfoPayment> {
                                   });
                                 },
                                 child: Text('Nueva tarjeta'),
-                                color: Colors.green[300],
+                                color: Colors.green,
                               ),
                             ),
                             RaisedButton(

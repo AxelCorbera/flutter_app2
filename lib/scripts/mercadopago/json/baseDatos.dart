@@ -159,6 +159,52 @@ class Compra {
     this.detalle,
     this.telefono,
   });
+
+  factory Compra.fromJson(Map<String, dynamic> json) {
+    var idJson = json['id'];
+    print(idJson.toString());
+    var fechaJson = json['fecha'];
+    var horaJson = json['hora'];
+    var clienteJson = json['cliente'];
+    var comercioJson = json['comercio'];
+    var nombreComercioJson = json['nombreComercio'];
+    var productosJson = json['productos'];
+    var totalJson = json['total'];
+    var pagoJson = json['pago'];
+    var estadoJson = json['estado'];
+    var productosCodigoJson = json['productosCodigo'];
+    var tarjetaJson = json['tarjeta'];
+    var idPagoJson = json['idPago'];
+    var documentoJson = json['documento'];
+    var tokenJson = json['token'];
+    var cuotasJson = json['cuotas'];
+    var montoCuotaJson = json['montoCuota'];
+    var totalCuotaJson = json['totalCuota'];
+    var detalleJson = json['detalle'];
+    var telefonoJson = json['telefono'];
+
+    return new Compra(
+        id: idJson,
+        fecha: fechaJson,
+        hora: horaJson,
+        cliente: clienteJson,
+        comercio: comercioJson,
+        nombreComercio: nombreComercioJson,
+        productos: productosJson,
+        total: totalJson,
+        pago: pagoJson,
+        estado: estadoJson,
+        productosCodigo: productosCodigoJson,
+        tarjeta: tarjetaJson,
+        idPago: idPagoJson,
+        documento: documentoJson,
+        token: tokenJson,
+        cuotas: cuotasJson,
+        montoCuota: montoCuotaJson,
+        totalCuota: totalCuotaJson,
+        detalle: detalleJson,
+        telefono: telefonoJson);
+  }
 }
 
 // To parse this JSON data, do

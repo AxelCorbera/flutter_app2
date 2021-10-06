@@ -633,7 +633,10 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(content: Center(
+          return AlertDialog(
+            elevation: 0,
+              backgroundColor: Colors.transparent,
+              content: Center(
             child: CircularProgressIndicator(
 
             ),
@@ -655,6 +658,7 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
     _cargando();
 
     String token = await CardToken(datos);
+    print('token card $token');
     final respuesta = await GuardarTarjeta(token);
     print("respuesta a guardar tarjeta > " + respuesta.toString());
 
@@ -666,8 +670,13 @@ class _AddCardState extends State<AddCard> with SingleTickerProviderStateMixin {
       Navigator.pop(context);
     }
 
-    TarjetaPago t = new TarjetaPago(datos, token, cuotas);
-    Navigator.pop(context, t);
+    // if(respuesta == "0") {
+    //   TarjetaPago t = new TarjetaPago(datos, respuesta, cuotas);
+    //   Navigator.pop(context, t);
+    // }else{
+      TarjetaPago t = new TarjetaPago(datos, token, cuotas);
+      Navigator.pop(context, t);
+    // }
   }
 
   void _agregarTarjeta() async{

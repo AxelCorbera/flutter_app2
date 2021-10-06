@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/cuotasJson.dart' as cuotas;
@@ -13,6 +15,7 @@ import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'mercadopago/customerJson.dart';
 import 'mercadopago/json/baseDatos.dart' as db;
+import 'mercadopago/responsePayment2.dart';
 
 class Album {
   final String id;
@@ -665,7 +668,7 @@ Future<CreateCustomer> CrearCustomer(Datos customerDatos) async {
   }
 }
 
-Future<ResponsePayment> CrearPago(Payment payment) async {
+Future<ResponsePayment2> CrearPago(Payment payment) async {
 //print(globals.accessToken);
   final response = await http.post(
     Uri.parse('https://api.mercadopago.com/v1/payments?'),
@@ -676,12 +679,13 @@ Future<ResponsePayment> CrearPago(Payment payment) async {
     body: jsonEncode(payment),
   );
   print(response.statusCode);
-  print(response.body);
+  debugPrint(response.body);
+  Clipboard.setData(ClipboardData(text: response.body));
   if (response.statusCode == 200 || response.statusCode == 201) {
 
     //print(response.body);
 
-    return ResponsePayment.fromJson(jsonDecode(response.body));
+    return ResponsePayment2.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
@@ -756,6 +760,67 @@ Future<Credenciales> Claves(String usuario) async {
     globals.accessToken = cred.accessToken!;
     globals.publicKey = cred.publicKey!;
     return cred;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
+Future<String> CargarCompra(db.Compra c)
+     async {
+
+  String query = "INSERT INTO `COMPRAS`(`fecha`, `cliente`, `productos`,"
+      " `total`, `pago`, `estado`, `tarjeta`, `idPago`, `documento`, `token`,"
+      " `cuotas`, `montoCuota`, `totalCuota`, `detalle`) "
+      "VALUES ('"+c.fecha+"','"+c.cliente.toString()+"','"+c.productos+"','"+
+      c.total+"','"+c.pago.toString()+"','"+c.estado.toString()+"','"+
+      c.tarjeta.toString()+"','"+ c.idPago.toString()+"','"+c.documento.toString()+
+      "','"+c.token.toString()+"','"+ c.cuotas.toString()+"','"+
+      c.montoCuota.toString()+"','"+c.totalCuota.toString()+
+      "','"+c.detalle.toString()+"')";
+
+  Map map = new Map<String, dynamic>();
+  map['query'] = query;
+
+  final response = await http.get(
+    Uri.parse('http://wh534614.ispot.cc/cargarcompra.php?query=$query'),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    }
+  );
+  print(response.statusCode);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    // If the server did return a 200 CREATED response,
+    // then parse the JSON.
+    return response.body;
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
+Future<String> ConsultarIdCompra(db.Compra c)
+async {
+
+  String query = "SELECT * FROM `COMPRAS` WHERE `fecha`='"+c.fecha+
+      "' AND `cliente`='"+c.cliente.toString()+"'";
+
+  Map map = new Map<String, dynamic>();
+  map['query'] = query;
+
+  final response = await http.get(
+      Uri.parse('http://wh534614.ispot.cc/consultaridcompra.php?query=$query'),
+      headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+  );
+  print(response.statusCode);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+
+    db.Compra compra = db.Compra.fromJson(jsonDecode(response.body));
+    return compra.id;
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
