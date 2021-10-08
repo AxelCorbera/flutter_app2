@@ -3,7 +3,8 @@ library flutter_app2.globals;
 import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/request.dart';
 
-Usuario? usuario = Usuario("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+Usuario? usuario =
+    Usuario("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 
 bool login = false;
 
@@ -25,7 +26,8 @@ class Carrito {
   final List<String>? tamano;
   final List<String> color;
 
-  Carrito({required this.id,
+  Carrito({
+    required this.id,
     required this.codigo,
     required this.marca,
     required this.nombre,
@@ -34,7 +36,18 @@ class Carrito {
     required this.precio,
     required this.imagen,
     required this.tamano,
-    required this.color,});
+    required this.color,
+  });
 }
 
-Carrito carrito = Carrito(id: [], codigo: [], marca: [], nombre: [], cantidad: [], stock: [], precio: [], imagen: [], tamano: [], color: []);
+Carrito carrito = Carrito(
+    id: [],
+    codigo: [],
+    marca: [],
+    nombre: [],
+    cantidad: [],
+    stock: [],
+    precio: [],
+    imagen: [],
+    tamano: [],
+    color: []);

@@ -11,6 +11,9 @@ import 'package:flutter_app2/scripts/mercadopago/responsePayment2.dart'as paymen
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/mercadopago/responsePayment.dart'
     as response;
+import 'package:url_launcher/url_launcher.dart';
+
+import '../globals.dart';
 
 class Checkout extends StatefulWidget {
   const Checkout(
@@ -41,9 +44,11 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
   String ticket = '';
   String respuestaPago = '';
   GlobalKey<FormState> _keyform = GlobalKey();
+  GlobalKey<ScaffoldState> _keyScaf = GlobalKey();
 
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _keyScaf,
       backgroundColor: Colors.grey[200],
       appBar: realizado2
           ? null
@@ -390,7 +395,9 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
         ),
         FlatButton.icon(
           icon: Icon(Icons.sms),
-          onPressed: (){}, label: Text(''
+          onPressed: (){
+            _consulta(ticket);
+          }, label: Text(''
             'Comunicate con nuestro \n WhatsApp para coordinar la entrega.',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -657,6 +664,17 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
 
         if(resp.status.toString() == 'approved'){
         respuestaPago = 'aprobado';
+        globals.carrito = Carrito(
+            id: [],
+            codigo: [],
+            marca: [],
+            nombre: [],
+            cantidad: [],
+            stock: [],
+            precio: [],
+            imagen: [],
+            tamano: [],
+            color: []);
         await _cargarCompra(resp);
         }else if(resp.status.toString() == 'rejected'){
           respuestaPago = 'rechazado';
@@ -672,6 +690,7 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
         Navigator.pop(context);
       } catch (Exception) {
         print('catch');
+        _mostrarMensaje(Exception.toString());
         print(Exception);
         Navigator.pop(context);
       }
@@ -679,6 +698,17 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
     } else {
       await _cargarPedido();
       respuestaPago = 'aprobado';
+      globals.carrito = Carrito(
+          id: [],
+          codigo: [],
+          marca: [],
+          nombre: [],
+          cantidad: [],
+          stock: [],
+          precio: [],
+          imagen: [],
+          tamano: [],
+          color: []);
       setState(() {
         //respuestaPago = 'rechazado';
         realizado1 = true;
@@ -703,7 +733,7 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
         cliente: globals.usuario!.id.toString(),
         comercio: '',
         nombreComercio: '',
-        productos: d.toJson().toString(),
+        productos: db.datosToJson(d),
         total: widget.total.toString(),
         pago: 'efectivo',
         estado: 'no pagado',
@@ -728,14 +758,17 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
   }
 
   Future<String> _cargarCompra(payment.ResponsePayment2 pago) async {
+
+    print('cargar compra 1');
     db.Datos d = new db.Datos(items: []);
     for(int i = 0; i < globals.carrito.cantidad.length; i++){
       db.Item item = new db.Item(cantidad: globals.carrito.cantidad[i],
           nombre: globals.carrito.nombre[i],
           codigo: globals.carrito.codigo[i],
-          precio: globals.carrito.precio[i]);
+          precio: globals.carrito.precio[i].toString());
       d.items.add(item);
     }
+    print('cargar compra 2');
     db.Compra c = new db.Compra(
         id: '',
         fecha: DateTime.now().toString(),
@@ -743,7 +776,7 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
         cliente: globals.usuario!.id.toString(),
         comercio: '',
         nombreComercio: '',
-        productos: d.toJson().toString(),
+        productos: db.datosToJson(d),
         total: widget.total.toString(),
         pago: widget.tarjeta.cuotasTarj.paymentMethodId,
         estado: pago.status,
@@ -757,12 +790,32 @@ class _CheckoutState extends State<Checkout> with TickerProviderStateMixin {
         totalCuota: pago.transactionDetails!.totalPaidAmount.toString(),
         detalle: '',
         telefono: telefono);
-
+    print('cargar compra 4');
     String respuesta = await request.CargarCompra(c);
+    print('cargar compra 5');
     if(respuesta == 'Se cargo la compra!'){
+      print('cargar compra 6');
       ticket = await request.ConsultarIdCompra(c);
+      print('numero ticket: $ticket');
     }
     return respuesta;
+  }
+
+  void _mostrarMensaje(String msg) {
+    SnackBar snackBar = SnackBar(
+      content: Text(msg),
+    );
+    _keyScaf.currentState!.showSnackBar(snackBar);
+  }
+
+  void _consulta(String ticket) async{
+    String texto = "Hola! Quisiera coordinar la entrega de mi compra Nro. $ticket";
+    var url = "https://api.whatsapp.com/send?phone=541151070587&text=$texto";
+    if (await canLaunch(url))
+      await launch(url);
+    else
+      // can't launch url, there is some error
+      throw "Could not launch $url";
   }
 }
 

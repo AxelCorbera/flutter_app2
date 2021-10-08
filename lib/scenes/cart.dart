@@ -90,7 +90,7 @@ class _CartState extends State<Cart> {
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: Text(
-            "Total: " + total.toString(),
+            "Total: " + total.toStringAsFixed(2),
             style: TextStyle(
                 fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
           ),
@@ -138,12 +138,11 @@ class _CartState extends State<Cart> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    RaisedButton.icon(
+                    RaisedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.cancel),
-                        label: Text('Cancelar')),
+                        child: Text('Cancelar')),
                     RaisedButton.icon(
                         onPressed: () {
                           globals.carrito.id.removeAt(index);

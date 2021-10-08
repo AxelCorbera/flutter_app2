@@ -5,6 +5,7 @@ import 'package:flutter_app2/scripts/mercadopago/cardsJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/customerJson.dart';
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/mercadopago/mercadoPago.dart' as mp;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -249,6 +250,8 @@ class _HomeState extends State<Home> {
                       color: Colors.green,
                     ),
               onTap: () {
+                if(globals.login = true)
+                  logout();
                 Navigator.of(context).pushNamed('/');
               },
             ),
@@ -268,6 +271,12 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  Future<Null> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', '');
+    prefs.setString('password', '');
   }
 
   void _unlogin(BuildContext context) {

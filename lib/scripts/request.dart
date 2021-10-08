@@ -784,15 +784,19 @@ Future<String> CargarCompra(db.Compra c)
   map['query'] = query;
 
   final response = await http.get(
-    Uri.parse('http://wh534614.ispot.cc/cargarcompra.php?query=$query'),
+    Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/cargarcompra.php?query=$query'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     }
   );
+
+  print('cargar >> $query');
+
   print(response.statusCode);
   if (response.statusCode == 200 || response.statusCode == 201) {
     // If the server did return a 200 CREATED response,
     // then parse the JSON.
+    print('cergar compra: ' + response.body);
     return response.body;
   } else {
     // If the server did not return a 201 CREATED response,
@@ -807,11 +811,13 @@ async {
   String query = "SELECT * FROM `COMPRAS` WHERE `fecha`='"+c.fecha+
       "' AND `cliente`='"+c.cliente.toString()+"'";
 
+  print('consultarid: $query');
+
   Map map = new Map<String, dynamic>();
   map['query'] = query;
 
   final response = await http.get(
-      Uri.parse('http://wh534614.ispot.cc/consultaridcompra.php?query=$query'),
+      Uri.parse('http://wh534614.ispot.cc/mypetshop/flutter/consultaridcompra.php?query=$query'),
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
@@ -820,6 +826,7 @@ async {
   if (response.statusCode == 200 || response.statusCode == 201) {
 
     db.Compra compra = db.Compra.fromJson(jsonDecode(response.body));
+    print('id de la compra: ' + compra.id);
     return compra.id;
   } else {
     // If the server did not return a 201 CREATED response,

@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Home.dart';
-import 'package:flutter_app2/scenes/items.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/baseDatos.dart';
-import 'package:flutter_app2/scripts/request.dart';
 import 'package:flutter_app2/globals.dart' as globals;
 
 class PurchaseDetails extends StatefulWidget {
@@ -335,15 +330,21 @@ class _purchaseDetailsState extends State<PurchaseDetails>
           Text(line.cantidad),
           line.nombre.length<30?
           Text(line.nombre):Text(line.nombre.substring(0,25) + "\n" + line.nombre.substring(25,line.nombre.length)),
-          Text("\$ " + line.precio),
+          Text("\$ " + _precio(line.precio.toString())),
         ]),
       ));
     }
     return lines;
   }
 
+  String _precio(String a){
+    double d = double.parse(a);
+    return d.toStringAsFixed(2);
+  }
+
   Datos _productos(String prod) {
     Datos datos = Datos.fromJson(jsonDecode(prod));
+        //datos.fromJson(jsonDecode(prod));
     return datos;
   }
 

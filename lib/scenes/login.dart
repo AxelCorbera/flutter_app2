@@ -4,6 +4,7 @@ import 'package:flutter_app2/scripts/album.dart' as album;
 import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/globals.dart' as globals;
 import 'package:flutter_app2/scripts/request.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -105,7 +106,7 @@ class _LoginState extends State<Login> {
                               textColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               onPressed: () {
-                                _login(context);
+                                _login(context,false);
                                 _loading;
                               },
                               child: Row(
@@ -170,9 +171,10 @@ class _LoginState extends State<Login> {
         ));
   }
 
-  void _login(BuildContext context) async {
+  void _login(BuildContext context, bool autolog) async {
     if (!_loading) {
-      if (_keyForm.currentState!.validate()) {
+      if (autolog == true || _keyForm.currentState!.validate()) {
+        if (autolog == false)
         _keyForm.currentState!.save();
         setState(() {
           _loading = true;
@@ -205,6 +207,7 @@ class _LoginState extends State<Login> {
             _loading = false;
             _errorMessage = "";
             globals.login = true;
+            _loginSave();
             Navigator.of(context).pushNamed('/Home');
           } else if (token.id == '' && token.id != '-1') {
             _loading = false;
@@ -229,5 +232,34 @@ class _LoginState extends State<Login> {
       content: Text(msg),
     );
     _keyScaf.currentState!.showSnackBar(snackBar);
+  }
+
+  void initState() {
+    super.initState();
+    autoLogIn();
+    }
+
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userId = prefs.getString('username');
+    final String? pass = prefs.getString('password');
+
+    if (userId != '' && userId != null) {
+      userName = userId.toString();
+      password = pass.toString();
+      _login(context,true);
+    }
+  }
+
+  Future<Null> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', '');
+    prefs.setString('password', '');
+  }
+
+  void _loginSave() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', userName);
+    prefs.setString('password', password);
   }
 }

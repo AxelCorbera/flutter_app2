@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Home.dart';
 import 'package:flutter_app2/scenes/items.dart';
-import 'package:flutter_app2/scripts/request.dart';
 import 'package:flutter_app2/globals.dart' as globals;
+import 'package:url_launcher/url_launcher.dart';
 
 class Item extends StatefulWidget {
   const Item({Key? key, required this.item}) : super(key: key);
@@ -95,7 +92,7 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                             "~Consultar stock antes de comprar~"),
                 ],
               ),
-              Text('Precio: \$ ' + item.precio.toString(),
+              Text('Precio: \$ ' + item.precio.toStringAsFixed(2),
                   style: TextStyle(fontSize: 20)),
               SizedBox(
                 height: 20,
@@ -110,6 +107,7 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         if (globals.login) {
+                          _consulta(item.nombre, item.marca, item.cantidad);
                         } else {
                           _unlogin(context);
                         }
@@ -346,5 +344,16 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
       ),
     );
     _scaffKey.currentState!.showSnackBar(snackBar);
+  }
+
+  void _consulta(String name, String marca, String kg) async{
+    //String texto = '¡Hola!,%20Queria%20consultar%20info/stock%20de%20$marca%20$name%20$kg%20kg';
+    var url = "https://api.whatsapp.com/send?phone=541151070587&text=Hola,%20Queria%20consultar%20info/stock%20de%20$marca%20$name%20$kg%20kg";
+    //var url ="https://google.com";
+    if (await canLaunch(url))
+    await launch(url);
+    else
+    // can't launch url, there is some error
+    throw "Could not launch $url";
   }
 }
