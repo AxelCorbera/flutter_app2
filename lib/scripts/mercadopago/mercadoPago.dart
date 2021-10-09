@@ -5,6 +5,8 @@ import 'package:flutter_app2/scripts/request.dart' as request;
 import 'package:flutter_app2/scripts/mercadopago/json/saveCardJson.dart';
 import 'package:flutter_app2/scripts/mercadopago/json/cardsJson.dart' as cards;
 import 'package:mercadopago_sdk/mercadopago_sdk.dart';
+import 'package:http/http.dart' as http;
+
 
 class DatosTarjeta {
   DatosTarjeta(
@@ -63,18 +65,31 @@ Future<String> GuardarTarjeta(String cardToken) async {
   }
   var mp = MP.fromAccessToken(globals.accessToken);
 
-  Map customer_id = new Map<String, String>();
-  customer_id["customer_id"] = globals.usuario!.idcustomer;
+  String accessToken = globals.accessToken;
+
+  String customer_id = globals.usuario!.idcustomer.toString();
   Map token = new Map<String, String>();
   token["token"] = cardToken;
 
-  final result = await mp.post("/v1/customers/",
-      data: token as Map<String, dynamic>,
-      params: customer_id as Map<String, String>);
+  String url = "https://api.mercadopago.com/v1/customers/$customer_id/cards";
+
+  // final result = await mp.post(url,
+  //     data: {"token": "$cardToken"});
+
+  final result = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    },
+    body: json.encode({"token": "$cardToken"}),
+  );
+
+  print(url);
   try {
     print(globals.accessToken);
     print(result);
-    return result["response"]["id"];
+    return result.body;
   } catch (Exception) {
     print(Exception);
     return "0";
@@ -92,6 +107,7 @@ Future<List<cards.Cards>> BuscarTarjetas(String customerId) async {
 
   final result = await mp.get("/v1/customers/",
       params: customer_id as Map<String, String>);
+
   try {
     print(globals.accessToken);
     print(result);
