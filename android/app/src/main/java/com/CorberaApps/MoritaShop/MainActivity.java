@@ -1,4 +1,4 @@
-package com.corbera.flutter_app2;
+package com.CorberaApps.MoritaShop;
 
 import io.flutter.embedding.android.FlutterActivity;
 

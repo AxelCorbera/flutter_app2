@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Runner.xcodeproj">
+      location = "self:/Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/MoritasPet.xcodeproj">
    </FileRef>
 </Workspace>

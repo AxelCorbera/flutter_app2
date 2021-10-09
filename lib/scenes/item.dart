@@ -117,7 +117,7 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
                       label: Text('Agregar al carrito'),
                       onPressed: () {
                         if (globals.login) {
-                          _showDialog(context);
+                          _showDialog(context,1);
                         } else {
                           _unlogin(context);
                         }
@@ -208,74 +208,120 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
         });
   }
 
-  void _showDialog(BuildContext context) {
+  void _showDialog(BuildContext context, int cant) {
     GlobalKey keyText = GlobalKey<EditableTextState>();
     final _textFieldController = TextEditingController();
+    int cantidad = cant;
+    _textFieldController.text = cantidad.toString();
     showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Stack(
-              overflow: Overflow.visible,
-              children: <Widget>[
-                Form(
-                  key: _formKey,
-                  child: Column(
+        builder: (BuildContext context)
+    {
+      String contentText = "Content of Dialog";
+      return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: Stack(
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Center(
                           child: Text(
-                        '¿Cuantas unidades quieres llevar?',
-                        style: TextStyle(fontSize: 20),
+                            '¿Cuantas unidades quieres llevar?',
+                            style: TextStyle(fontSize: 20),
                             textAlign: TextAlign.center,
-                      )),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _textFieldController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: 'cantidad',
+                          )),
+                      SizedBox(height: 20,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          RaisedButton(
+                          shape: CircleBorder(
+                            side: BorderSide.none
                           ),
-                          validator: (String? value) {
-                            return value!.isEmpty
-                                ? 'El campo esta vacio'
-                                : value == "0"
-                                    ? 'Seleccione una cantidad valida'
-                                    : value.contains(',') ||
-                                            value.contains('.') ||
-                                            value.contains('-') ||
-                                            value.contains(' ')
-                                        ? 'Seleccione una cantidad valida'
-                                        : null;
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton(
-                          child: Text("Agregar"),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
+                              onPressed: () {
+                            if (cantidad > 1)
                               setState(() {
-                                _agregarProducto(
-                                    widget.item, _textFieldController.text);
-                                _mostrarMensaje("El producto se ha añadido!");
-                                Navigator.pop(context);
-                                carrito = globals.carrito.id.length;
+                                cantidad--;
                               });
-                            }
                           },
-                        ),
+                              child: Icon(Icons.remove),),
+                          Text(cantidad.toString(),
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold
+                          ),),
+                          RaisedButton(
+                            shape: CircleBorder(
+                                side: BorderSide.none
+                            ),
+                            onPressed: () {
+                                setState(() {
+                                  cantidad++;
+                                });
+                            },
+                            child: Icon(Icons.add),),
+
+                          // TextFormField(
+                          //   controller: _textFieldController,
+                          //   keyboardType: TextInputType.number,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'cantidad',
+                          //   ),
+                          //   validator: (String? value) {
+                          //     return value!.isEmpty
+                          //         ? 'El campo esta vacio'
+                          //         : value == "0"
+                          //             ? 'Seleccione una cantidad valida'
+                          //             : value.contains(',') ||
+                          //                     value.contains('.') ||
+                          //                     value.contains('-') ||
+                          //                     value.contains(' ')
+                          //                 ? 'Seleccione una cantidad valida'
+                          //                 : null;
+                          //   },
+                          // ),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RaisedButton(
+                              child: Text("Cancelar"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RaisedButton(
+                              child: Text("Agregar"),
+                              onPressed: () {
+                                  setState(() {
+                                    _agregarProducto(
+                                        widget.item, cantidad.toString());
+                                    _mostrarMensaje("El producto se ha añadido!");
+                                    Navigator.pop(context);
+                                    carrito = globals.carrito.id.length;
+                                  });
+                              },
+                            ),
+                          ),
+                        ],
                       )
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        });
+                ],
+              ),
+            );
+          });
+    });
   }
 
   @override
@@ -332,6 +378,10 @@ class _itemState extends State<Item> with TickerProviderStateMixin {
       globals.carrito.tamano!.add(widget.item.tamano);
       globals.carrito.color.add(widget.item.color);
     }
+
+    setState(() {
+
+    });
   }
 
   void _mostrarMensaje(String msg) {
