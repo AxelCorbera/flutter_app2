@@ -12,8 +12,6 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Moritas Pet</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,6 +26,8 @@
 	<string>$(PRODUCT_NAME) quiere utilizar su camara para tomar una foto</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>$(PRODUCT_NAME) quiere acceder a sus fotos para seleccionar una imagen</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER) Quiere acceder a tus fotos</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

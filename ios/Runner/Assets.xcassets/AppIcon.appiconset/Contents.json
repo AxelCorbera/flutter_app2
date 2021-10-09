@@ -2,7 +2,7 @@
   "images" : [
     {
       "display-gamut" : "sRGB",
-      "filename" : "Icon-App-20x20@2x.png",
+      "filename" : "Icon-App-20x20@2x-1.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
@@ -235,7 +235,7 @@
       "size" : "83.5x83.5"
     },
     {
-      "filename" : "Icon-App-1024x1024@1x.png",
+      "filename" : "logoStore.jpg",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"
