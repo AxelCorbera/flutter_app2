@@ -33,10 +33,23 @@ class _RegisterState extends State<Register> {
                     gradient: LinearGradient(
                   colors: [Colors.greenAccent, Colors.blueAccent],
                 )),
-                child: Image.asset(
-                  'lib/assets/images/logoMorita2.png',
-                  color: Colors.white,
-                  height: 100,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'lib/assets/images/logoMorita2.png',
+                      color: Colors.white,
+                      height: 100,
+                    ),
+                    Center(
+                        child: Text(
+                          'Crear cuenta',
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ],
                 ),
               ),
               SizedBox(
@@ -50,14 +63,6 @@ class _RegisterState extends State<Register> {
                 child: Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 70),
-                  child: Center(
-                      child: Text(
-                    'Crear cuenta',
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  )),
                 ),
               ),
               Transform.translate(
