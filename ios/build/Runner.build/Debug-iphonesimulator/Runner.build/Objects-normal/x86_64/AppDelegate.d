@@ -1,0 +1,26 @@
+dependencies: \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Runner/AppDelegate.m \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Runner/AppDelegate.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Modules/module.modulemap \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Pods/Headers/Public/url_launcher/url_launcher.modulemap \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Pods/Headers/Public/shared_preferences/shared_preferences.modulemap \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Pods/Headers/Public/image_picker/image_picker.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.5.sdk/usr/include/mach-o/compact_unwind_encoding.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.5.sdk/usr/include/mach-o/dyld.modulemap \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterViewController.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterHeadlessDartRunner.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterEngineGroup.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterEngine.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterDartProject.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterCallbackCache.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterTexture.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterPlatformViews.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterCodecs.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterChannels.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterBinaryMessenger.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterPlugin.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterMacros.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/FlutterAppDelegate.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/build/Debug-iphonesimulator/Flutter.framework/Headers/Flutter.h \
+  /Users/axelcorbera/AndroidStudioProjects/flutter_app2/ios/Runner/GeneratedPluginRegistrant.h
